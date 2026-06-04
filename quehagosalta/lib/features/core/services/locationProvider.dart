@@ -25,7 +25,7 @@ class LocationProvider extends ChangeNotifier {
     }
 
     permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied) {
+    if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         _errorMessage = 'Permisos de ubicación denegados.';
@@ -50,7 +50,9 @@ class LocationProvider extends ChangeNotifier {
       notifyListeners();
     });
 
+    void dispose() {
+      position.cancel();
+      super.dispose();
+    }
   }
-
-
 }
