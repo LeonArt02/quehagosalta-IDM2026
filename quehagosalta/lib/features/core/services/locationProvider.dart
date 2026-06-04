@@ -50,9 +50,5 @@ class LocationProvider extends ChangeNotifier {
       notifyListeners();
     });
 
-    void dispose() {
-      position.cancel();
-      super.dispose();
-    }
   }
 }

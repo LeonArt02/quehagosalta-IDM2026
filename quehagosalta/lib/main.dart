@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:quehagosalta/features/map/presentation/screens/HomeScreen.dart';
+import 'package:quehagosalta/features/core/services/locationProvider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+      ],
+      child:    const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
