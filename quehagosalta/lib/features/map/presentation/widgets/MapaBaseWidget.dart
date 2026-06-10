@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:quehagosalta/features/core/services/locationProvider.dart';
+import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/CustomFlutterMap.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/user-location-marker.dart';
 import 'package:provider/provider.dart';

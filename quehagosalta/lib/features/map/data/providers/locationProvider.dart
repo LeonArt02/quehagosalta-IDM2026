@@ -49,9 +49,5 @@ class LocationProvider extends ChangeNotifier {
       _currentPosition = LatLng(position.latitude, position.longitude);
       notifyListeners();
     });
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
   }
 }
