@@ -11,5 +11,5 @@ class Categories(models.Model):
     name = models.CharField(max_length=36, unique=True)
     icon_key = models.CharField(max_length=255)
 
-class Meta: 
-    db_table = 'categories'
+    class Meta: 
+        db_table = 'categories'
