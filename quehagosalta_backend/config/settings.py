@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #agregados
+    'rest_framework',
+    'Apis',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'quehagosalta_back.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -66,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'quehagosalta_back.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
@@ -74,11 +77,17 @@ WSGI_APPLICATION = 'quehagosalta_back.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres', # Nombre por defecto en Supabase
+        'USER': 'postgres.aupnfnachmkiqvfuokhr',
+        'PASSWORD': 'jabadevelopergod123', # Tu contraseña de Supabase
+        'HOST': 'aws-1-sa-east-1.pooler.supabase.com', # El host de tu URI
+        'PORT': '5432',
     }
 }
 
+# Le dice a Django que use el modelo CustomUser de la app 'api'
+#AUTH_USER_MODEL = 'Apis.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
