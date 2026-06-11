@@ -2,12 +2,15 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-from .serializers import CategoriesSerializer
-from .models import Categories
+from .serializers import CategoriesSerializer, BussinesSerializer
+from .models import Categories, Bussines
+
+
 
 #from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -24,3 +27,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
 
+class BussinesViewSet(viewsets.ModelViewSet):
+    queryset = Bussines.objects.all()
+    serializer_class = BussinesSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]

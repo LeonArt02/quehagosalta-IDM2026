@@ -1,5 +1,5 @@
 Operacion: Lectura(GET)
-Tabla en Supabase: business_category
+Tabla en Supabase: categories
 Autenticación Requerida: NO (Acceso Publico)
 
 Entrada(desde Flutter a Supabase){}
@@ -15,6 +15,16 @@ Salida(desde Supabase a Flutter):
 ]
 
 Detalles:
-    id String(uuid) Primary key (autogenerada)
-    nombre String (Nombre de la categoria)
-    icon_key String (identificador para el mapeo con Icons en flutter)
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable = False
+    )
+    name =  models.CharField(max_length=36, unique=True)
+    description =  models.CharField(max_length=280, unique=True)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    address = models.CharField(max_length=280)
+    is_verificated = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
