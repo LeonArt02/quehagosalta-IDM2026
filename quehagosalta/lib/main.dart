@@ -7,17 +7,22 @@ import 'package:quehagosalta/features/map/data/services/category_services.dart';
 import 'package:quehagosalta/features/map/presentation/screens/HomeScreen.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
+import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
 
 void main() {
   final apiClient = ApiClient(baseUrl: 'http://127.0.0.1:8000/api/v1');
   final categotyservices = CategoryServices(apiClient);
+  final bussinesServices = BussinesServices(apiClient);
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LocationProvider()),
         ChangeNotifierProvider(
           create: (_) => CategoryProvider(categotyservices),
+
         ),
+        ChangeNotifierProvider(create: (_) => BusinessProvider(bussinesServices)),
       ],
       child: const MyApp(),
     ),
