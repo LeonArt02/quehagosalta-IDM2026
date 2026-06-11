@@ -27,7 +27,7 @@ class Bussines(models.Model):
     address = models.CharField(max_length=280)
     is_verificated = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'bussines'

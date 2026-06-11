@@ -30,4 +30,4 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class BussinesViewSet(viewsets.ModelViewSet):
     queryset = Bussines.objects.all()
     serializer_class = BussinesSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    #permission_classes = [IsAuthenticatedOrReadOnly]
