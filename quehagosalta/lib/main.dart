@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quehagosalta/core/api/api_client.dart';
+import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
+import 'package:quehagosalta/features/map/data/services/category_services.dart';
 import 'package:quehagosalta/features/map/presentation/screens/HomeScreen.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  final apiClient = ApiClient(baseUrl: 'http://127.0.0.1:8000/api/v1');
+  final categotyservices = CategoryServices(apiClient);
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => LocationProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+        ChangeNotifierProvider(
+          create: (_) => CategoryProvider(categotyservices),
+        ),
+      ],
       child: const MyApp(),
     ),
   );
