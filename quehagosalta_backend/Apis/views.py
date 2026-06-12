@@ -28,6 +28,6 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriesSerializer
 
 class BussinesViewSet(viewsets.ModelViewSet):
-    queryset = Bussines.objects.all()
+    queryset = Bussines.objects.select_related('category').all()
     serializer_class = BussinesSerializer
     #permission_classes = [IsAuthenticatedOrReadOnly]
