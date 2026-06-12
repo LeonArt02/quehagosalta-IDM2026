@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/CustomFlutterMap.dart';
+import 'package:quehagosalta/features/map/presentation/widgets/bussines_detail_sheet.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/user-location-marker.dart';
 import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/bussines_marker_widget.dart';
@@ -46,6 +47,9 @@ class _mapBaseWidget extends State<MapBaseWidget> {
   }
 
   List<Marker> _buildBusinessMarkers(List<BussinesModel> businesses) {
+    final locationUser = context.read<LocationProvider>();
+    final LatLng userLatLng =
+        locationUser.currentPosition ?? const LatLng(-24.7859, -65.4116);
     return businesses.map((business) {
       return Marker(
         point: LatLng(business.lat, business.lng),
@@ -54,11 +58,13 @@ class _mapBaseWidget extends State<MapBaseWidget> {
         alignment: Alignment.center,
         child: GestureDetector(
           onTap: () {
-            // Al tocar el pin rojo, desplegamos la hoja de detalle que ya tenés armada
-            /*showModalBottomSheet(
+            showModalBottomSheet(
               context: context,
-              builder: (context) => BussinesDetailSheet(bussines: business),
-            );*/
+              builder: (context) => BussinesDetailSheet(
+                bussines: business,
+                userLocation: userLatLng,
+              ),
+            );
           },
           child: BusinessMarkerWidget(business: business),
         ),

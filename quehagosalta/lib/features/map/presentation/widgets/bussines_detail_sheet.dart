@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
 import 'package:quehagosalta/features/map/data/services/maps_navigation_services.dart';
 
 class BussinesDetailSheet extends StatelessWidget {
   final BussinesModel bussines;
-  final double userLat; // Ubicación actual 
-  final double userLng;
+  final LatLng userLocation;
 
   const BussinesDetailSheet({
     Key? key,
     required this.bussines,
-    required this.userLat,
-    required this.userLng,
+    required this.userLocation,
   }) : super(key: key);
 
   /// Método estático para invocar el BottomSheet desde el mapa fácilmente
-  static void show(BuildContext context, BussinesModel bussines, double userLat, double userLng) {
+  static void show(
+    BuildContext context,
+    BussinesModel bussines,
+    LatLng userLocation,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => BussinesDetailSheet(
-        bussines: bussines,
-        userLat: userLat,
-        userLng: userLng,
-      ),
+      builder: (context) =>
+          BussinesDetailSheet(bussines: bussines, userLocation: userLocation),
     );
   }
 
@@ -32,8 +32,8 @@ class BussinesDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
       initialChildSize: 0.4, // Ocupa el 40% de la pantalla al abrir
-      minChildSize: 0.3,     // Mínimo al que se puede reducir antes de cerrarse
-      maxChildSize: 0.85,    // Máximo al expandirse
+      minChildSize: 0.3, // Mínimo al que se puede reducir antes de cerrarse
+      maxChildSize: 0.85, // Máximo al expandirse
       builder: (_, controller) {
         return Container(
           decoration: const BoxDecoration(
@@ -56,7 +56,7 @@ class BussinesDetailSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Encabezado: Nombre y Badge de Verificación
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,8 +75,6 @@ class BussinesDetailSheet extends StatelessWidget {
               ),
               const SizedBox(height: 15),
 
-
-
               // Descripción
               Text(
                 bussines.description,
@@ -88,8 +86,8 @@ class BussinesDetailSheet extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: () {
                   MapsNavigationServices.getDirections(
-                    originLat: userLat,
-                    originLng: userLng,
+                    originLat: userLocation.latitude,
+                    originLng: userLocation.longitude,
                     destLat: bussines.lat,
                     destLng: bussines.lng,
                     context: context,
@@ -102,7 +100,8 @@ class BussinesDetailSheet extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  backgroundColor: Colors.redAccent, // Ajusta a tu paleta (ej. colores regionales de Salta)
+                  backgroundColor: Colors
+                      .redAccent, // Ajusta a tu paleta (ej. colores regionales de Salta)
                   foregroundColor: Colors.white,
                 ),
               ),
