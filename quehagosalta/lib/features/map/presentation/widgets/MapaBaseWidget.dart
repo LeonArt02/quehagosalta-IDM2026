@@ -6,7 +6,9 @@ import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/CustomFlutterMap.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/user-location-marker.dart';
 import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
+import 'package:quehagosalta/features/map/presentation/widgets/bussines_marker_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:quehagosalta/core/utils/icon_mapper.dart';
 import 'user-location-marker.dart';
 import 'CustomFlutterMap.dart';
 
@@ -49,6 +51,7 @@ class _mapBaseWidget extends State<MapBaseWidget> {
         point: LatLng(business.lat, business.lng),
         width: 45,
         height: 45,
+        alignment: Alignment.center,
         child: GestureDetector(
           onTap: () {
             // Al tocar el pin rojo, desplegamos la hoja de detalle que ya tenés armada
@@ -57,11 +60,7 @@ class _mapBaseWidget extends State<MapBaseWidget> {
               builder: (context) => BussinesDetailSheet(bussines: business),
             );*/
           },
-          child: const Icon(
-            Icons.location_on,
-            color: Colors.red, // Rojo distintivo para los comercios
-            size: 40,
-          ),
+          child: BusinessMarkerWidget(business: business),
         ),
       );
     }).toList();
