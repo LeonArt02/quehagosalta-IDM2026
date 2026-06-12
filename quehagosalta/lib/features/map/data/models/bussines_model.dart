@@ -1,3 +1,5 @@
+import 'category_model.dart';
+
 class BussinesModel {
   final String name;
   final String description;
@@ -5,6 +7,7 @@ class BussinesModel {
   final bool isVerified; // True: Autorizado por autoridades, False: Pendiente
   final double lat;
   final double lng;
+  final CategoryModel category;
 
   BussinesModel({
     required this.name,
@@ -13,6 +16,7 @@ class BussinesModel {
     required this.isVerified,
     required this.lat,
     required this.lng,
+    required this.category,
   });
 
   factory BussinesModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,7 @@ class BussinesModel {
       isVerified: json['is_verified'] ?? false,
       lat: json['latitude'],
       lng: json['longitude'],
+      category: CategoryModel.fromJson(json['category'] ?? {}),
     );
   }
 }
