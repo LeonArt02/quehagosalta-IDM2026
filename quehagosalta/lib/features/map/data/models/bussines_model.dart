@@ -17,12 +17,12 @@ class BussinesModel {
 
   factory BussinesModel.fromJson(Map<String, dynamic> json) {
     return BussinesModel(
-      name: json['name'],
-      description: json['description'],
-      address: json['address'],
-      isVerified: json['is_verified'], // Asegúrate de que el JSON tenga esta clave
-      lat: json['lat'],
-      lng: json['lng'],
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      address: json['address'] ?? '',
+      isVerified: json['is_verified'] ?? false,
+      lat: json['latitude'],
+      lng: json['longitude'],
     );
-  } 
+  }
 }
