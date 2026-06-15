@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/api/api_client.dart';
+import 'package:quehagosalta/features/map/data/providers/auth_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
+import 'package:quehagosalta/features/map/data/services/auth_service.dart';
 import 'package:quehagosalta/features/map/data/services/category_services.dart';
 
 import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
+import 'package:quehagosalta/features/map/data/services/auth_service.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
+
 void main() {
   final apiClient = ApiClient(baseUrl: 'http://192.168.100.15:8000/api/v1');
   final categotyservices = CategoryServices(apiClient);
   final bussinesServices = BussinesServices(apiClient);
+  final authService = AuthService(apiClient);
   runApp(
     MultiProvider(
       providers: [
@@ -22,6 +27,7 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => BusinessProvider(bussinesServices),
         ),
+        ChangeNotifierProvider(create: (_) => AuthProvider(authService)),
       ],
       child: const MyApp(),
     ),
@@ -33,17 +39,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
 
-        debugShowCheckedModeBanner: false,
+      title: 'Que Hago Salta',
 
-        title: 'Que Hago Salta',
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
 
-        theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
+      initialRoute: AppRoutes.login,
 
-        initialRoute: AppRoutes.login,
-
-        routes: AppRoutes.routes,
-      );
+      routes: AppRoutes.routes,
+    );
     /*
     MaterialApp(
       title: 'Flutter Demo',

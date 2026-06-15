@@ -1,11 +1,8 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:quehagosalta/features/map/data/services/auth_service.dart';
 import 'package:quehagosalta/features/map/data/models/user_model.dart';
 import 'package:quehagosalta/features/map/data/models/aut_response_model.dart';
 import 'package:quehagosalta/features/map/data/models/role_model.dart';
-
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService;
@@ -20,7 +17,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isGuest => _isGuest;
   bool get isAuthenticated => _currentUser != null && _token != null;
-  
+
   UserModel? get currentUser => _currentUser;
   String? get token => _token;
 
@@ -30,8 +27,6 @@ class AuthProvider extends ChangeNotifier {
     }
     return null;
   }
-
-
 
   Future<void> login({required String email, required String password}) async {
     _isLoading = true;
@@ -51,7 +46,6 @@ class AuthProvider extends ChangeNotifier {
 
       // TODO: Aquí implementaremos el guardado en el dispositivo (SecureStorage)
       // await _secureStorage.saveToken(response.token);
-
     } catch (e) {
       // Relanzamos el error para que el UI muestre el ToastService.error
       rethrow;
@@ -62,35 +56,36 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> register({
-    required String name,
-    required String lastname,
+    required String firstName,
+    required String lastName,
     required String email,
     required String phone,
     required String password,
     required bool isBusiness,
   }) async {
-
+    _isLoading = true;
+    notifyListeners();
     try {
-
-      _isLoading = true;
-      notifyListeners();
-
-      await _authService.register(
-        name: name,
-        lastname: lastname,
+      final AuthResponseModel response = await _authService.register(
+        firstName: firstName,
+        lastName: lastName,
         email: email,
         phone: phone,
         password: password,
-        isBusiness: isBusiness, 
+        isBusiness: isBusiness,
       );
 
+      _currentUser = response.user;
+      _token = response.token;
+      _isGuest = false;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
     } finally {
-
       _isLoading = false;
       notifyListeners();
     }
   }
-
 
   /// Activa el modo anónimo/invitado para explorar la app
   void continueAsGuest() {
@@ -106,7 +101,7 @@ class AuthProvider extends ChangeNotifier {
     _token = null;
     _isGuest = false;
     notifyListeners();
-    
+
     // TODO: Aquí implementaremos el borrado del token local
     // await _secureStorage.deleteToken();
   }

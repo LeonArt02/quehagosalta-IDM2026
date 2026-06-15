@@ -1,4 +1,4 @@
-  class RoleModel {
+class RoleModel {
   final String id;
   final String name;
   final String image;

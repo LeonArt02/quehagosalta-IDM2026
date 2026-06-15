@@ -41,13 +41,13 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     final authProvider = context.read<AuthProvider>();
 
     try {
       await authProvider.register(
-        name: _nameController.text.trim(),
-        lastname: _lastnameController.text.trim(),
+        firstName: _nameController.text.trim(),
+        lastName: _lastnameController.text.trim(),
         email: _emailController.text.trim(),
         phone: _phoneController.text.trim(),
         password: _passwordController.text.trim(),
@@ -58,16 +58,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (_isBusiness) {
         ToastService.success('Usuario creado. Ahora registra tu local');
-        // Usamos pushReplacementNamed para que no pueda volver a la pantalla de 
+        // Usamos pushReplacementNamed para que no pueda volver a la pantalla de
         // registro de usuario si presiona el botón "Atrás" de Android.
-        Navigator.pushReplacementNamed(context, '/business_register'); 
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         ToastService.success('Registro exitoso. Por favor, inicia sesión.');
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/home');
+        //Navigator.pop(context);
       }
-
     } catch (e) {
-      ToastService.error(e.toString());
+      // Si algo vuelve a fallar, el catch evita que la app se congele y te avisa qué pasó
+      print("🚨 Error en el flujo de registro: $e");
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 

@@ -3,13 +3,15 @@ import 'package:quehagosalta/core/api/api_config.dart';
 import '../models/aut_response_model.dart';
 
 class AuthService {
-  final ApiClient _apiClient = ApiClient(baseUrl: ApiConfig.host);
+  final ApiClient _apiClient;
+
+  AuthService(this._apiClient);
 
   Future<AuthResponseModel> login({
     required String email,
     required String password,
   }) async {
-    final response = await _apiClient.post('/auth/login/', {
+    final response = await _apiClient.post('/login/', {
       'email': email,
       'password': password,
     });
@@ -22,24 +24,31 @@ class AuthService {
     return AuthResponseModel.fromJson(response['data']);
   }
 
-  Future<void> register({
-    required String name,
-    required String lastname,
+  Future<AuthResponseModel> register({
+    required String firstName,
+    required String lastName,
     required String email,
+    required String
+    phone, // 🚀 Corregido: Obligatorio para coincidir con la Screen y el Back
     required String password,
-    String? phone, //
     required bool isBusiness,
   }) async {
-    final response = await _apiClient.post('/auth/register/', {
-      'name': name,
-      'lastname': lastname,
+    final Map<String, dynamic> bodyData = {
+      'firstName': firstName,
+      'lastName': lastName,
       'email': email,
       'password': password,
-      if (phone != null && phone.isNotEmpty) 'phone': phone,
-    });
+      'phone': phone,
+      'is_business': isBusiness,
+      'notification_token': null,
+    };
 
-    if (response['success'] == false) {
-      throw Exception(response['message'] ?? 'Error al registrar');
+    final response = await _apiClient.post('/register/', bodyData);
+
+    if (response['success'] == false || response['data'] == null) {
+      throw Exception(response['message'] ?? 'Error al registrar el usuario');
     }
+
+    return AuthResponseModel.fromJson(response['data']);
   }
 }

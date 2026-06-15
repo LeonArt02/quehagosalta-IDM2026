@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     #agregados
     'rest_framework',
     'Apis',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +84,12 @@ DATABASES = {
         'HOST': 'aws-1-sa-east-1.pooler.supabase.com', # El host de tu URI
         'PORT': '5432',
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 # Le dice a Django que use el modelo CustomUser de la app 'api'
