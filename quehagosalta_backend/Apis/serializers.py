@@ -48,9 +48,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BussinesSerializer(serializers.ModelSerializer):
 
-    category_id = serializers.ModelChoiceField( #Reportar funcionamiento
+    category_id = serializers.PrimaryKeyRelatedField( #Reportar funcionamiento
         queryset=Categories.objects.all(),
-        source='category',
+        source='categories',
         required=False,
         allow_null=True
     )

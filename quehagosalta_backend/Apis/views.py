@@ -1,19 +1,19 @@
-from quehagosalta_backend.Apis.models import UserHasRoles
 from django.db import transaction
-from quehagosalta_backend.Apis.serializers import UserSerializer
 from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from django.conf import settings
 from rest_framework import status
 
-from .serializers import CategoriesSerializer, BussinesSerializer, RoleSerializer
-from .models import Categories, Bussines, Role
+from .serializers import CategoriesSerializer, BussinesSerializer, RoleSerializer, UserSerializer
+from .models import Categories, Bussines, Role, UserHasRoles
 
 
 
@@ -132,3 +132,19 @@ def register(request):
         return Response({
             "message": f"Error crítico en el servidor: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def get_custom_token_for_user(user):
+    refresh_token = RefreshToken.for_user(user)
+    # agregar datos adicionales al payload del token
+
+    refresh_token.payload['id'] = user.id 
+    refresh_token.payload['name'] = user.firstName 
+    return refresh_token
+
+
+def getCustomTokenForUser(user):
+    refresh_token = RefreshToken.for_user(user)
+    del refresh_token.payload['user_id']
+    refresh_token.payload['id'] = user.id
+    refresh_token.payload['name'] = user.name
+    return refresh_token

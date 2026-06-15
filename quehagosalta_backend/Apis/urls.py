@@ -1,15 +1,16 @@
 from django.urls import path, include
+# pyrefly: ignore [missing-import]
 from rest_framework.routers import DefaultRouter
-from .views import CategoriesViewSet, BussinesViewSet, RoleViewSet, register, test_api
-
-# Creamos el enrutador automático
+from .views import CategoriesViewSet, BussinesViewSet, register, RoleViewSet
+# enrutador automático
 router = DefaultRouter()
 
 router.register(r'categories', CategoriesViewSet, basename='categories')
 router.register(r'bussines', BussinesViewSet, basename='bussines')
-# Las URLs de la app simplemente incluyen todas las rutas que el router fabricó
+router.register(r'roles', RoleViewSet, basename='roles')
+
+
 urlpatterns = [
     path('', include(router.urls)),
     path('register/', register, name='user_register'),
-    path('', include(router.urls))
 ]
