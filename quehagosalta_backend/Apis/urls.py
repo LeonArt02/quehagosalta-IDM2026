@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CategoriesViewSet, BussinesViewSet
+from .views import CategoriesViewSet, BussinesViewSet, RoleViewSet, register, test_api
 
 # Creamos el enrutador automático
 router = DefaultRouter()
@@ -10,4 +10,6 @@ router.register(r'bussines', BussinesViewSet, basename='bussines')
 # Las URLs de la app simplemente incluyen todas las rutas que el router fabricó
 urlpatterns = [
     path('', include(router.urls)),
+    path('register/', register, name='user_register'),
+    path('', include(router.urls))
 ]
