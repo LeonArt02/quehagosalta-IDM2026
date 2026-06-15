@@ -4,12 +4,10 @@ import 'package:quehagosalta/core/api/api_client.dart';
 import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/map/data/services/category_services.dart';
-import 'package:quehagosalta/features/map/presentation/screens/HomeScreen.dart';
-import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
-import 'package:provider/provider.dart';
+
 import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
-
+import 'package:quehagosalta/config/routes/app_routes.dart';
 void main() {
   final apiClient = ApiClient(baseUrl: 'http://192.168.100.15:8000/api/v1');
   final categotyservices = CategoryServices(apiClient);
@@ -35,53 +33,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
+        debugShowCheckedModeBanner: false,
+
+        title: 'Que Hago Salta',
+
+        theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
+
+        initialRoute: AppRoutes.login,
+
+        routes: AppRoutes.routes,
+      );
+    /*
+    MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
       home: Homescreen(),
     );
-  }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
+     */
   }
 }

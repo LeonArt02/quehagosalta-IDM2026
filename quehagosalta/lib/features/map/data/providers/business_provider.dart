@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/bussines_detail_sheet.dart';
 import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
+import 'package:latlong2/latlong.dart';
 
 class BusinessProvider extends ChangeNotifier {
   final BussinesServices _service;
@@ -34,6 +35,37 @@ class BusinessProvider extends ChangeNotifier {
       
     } catch (e) {
       _errorMessage = 'Error al cargar los locales: $e';
+      debugPrint(_errorMessage);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> createBusiness({
+    required String name,
+    required String description,
+    required String address,
+    required LatLng location,
+
+  }) async {
+    _isLoading = true;
+    _errorMessage = '';
+    notifyListeners();
+
+    try {
+      await _service.createBusiness(
+        name: name,
+        description: description,
+        address: address,
+        latitude: location.latitude,
+        longitude: location.longitude,
+
+      );
+      // Recarga la lista de locales después de crear uno nuevo
+      await loadBusinesses();
+    } catch (e) {
+      _errorMessage = 'Error al registrar el local: $e';
       debugPrint(_errorMessage);
     } finally {
       _isLoading = false;
