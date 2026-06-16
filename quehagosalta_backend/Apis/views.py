@@ -11,9 +11,10 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.conf import settings
 from rest_framework import status
+import bcrypt
 
 from .serializers import CategoriesSerializer, BussinesSerializer, RoleSerializer, UserSerializer
-from .models import Categories, Bussines, Role, UserHasRoles
+from .models import Categories, Bussines, Role, UserHasRoles, User
 
 
 
@@ -133,6 +134,7 @@ def register(request):
             "message": f"Error crítico en el servidor: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 def get_custom_token_for_user(user):
     refresh_token = RefreshToken.for_user(user)
     # agregar datos adicionales al payload del token
@@ -149,3 +151,86 @@ def getCustomTokenForUser(user):
     refresh_token.payload['id'] = str(user.id)
     refresh_token.payload['firstName'] = user.firstName
     return refresh_token
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    if not email or not password:
+
+        return Response(
+            {
+                "message": "Email y password son obligatorios",
+                "statusCode": status.HTTP_400_BAD_REQUEST
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+
+        user = User.objects.get(email=email)
+
+    except User.DoesNotExist:
+
+        return Response(
+            {
+                "message": "El email o el password no son validos",
+                "statusCode": status.HTTP_401_UNAUTHORIZED
+            },
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    if bcrypt.checkpw(
+        password.encode('utf-8'),
+        user.password.encode('utf-8')
+    ):
+
+        refresh_token = getCustomTokenForUser(user)
+        access_token = str(refresh_token.access_token)
+
+        roles = Role.objects.filter(userhasroles__user=user)
+        roles_serializer = RoleSerializer(roles, many=True)
+
+        user_data = {
+
+            "user": {
+
+                "id": user.id,
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "email": user.email,
+                "phone": user.phone,
+
+                "image": (
+                    f'http://{settings.GLOBAL_IP}:{settings.GLOBAL_HOST}{user.image}'
+                    if user.image else None
+                ),
+
+                "notification_token": user.notification_token,
+
+                "roles": roles_serializer.data,
+
+            },
+
+            "token": "Bearer " + access_token
+
+        }
+
+        return Response(
+            user_data,
+            status=status.HTTP_200_OK
+        )
+
+    else:
+
+        return Response(
+            {
+                "message": "El email o el password no son validos",
+                "statusCode": status.HTTP_401_UNAUTHORIZED
+            },
+            status=status.HTTP_401_UNAUTHORIZED
+        )

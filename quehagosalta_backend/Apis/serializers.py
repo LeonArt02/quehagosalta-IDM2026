@@ -1,6 +1,8 @@
 from dataclasses import field
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
+import bcrypt;
+
 
 from .models import Categories, Bussines, User, Role
 
@@ -38,11 +40,22 @@ class UserSerializer(serializers.ModelSerializer):
             ]
         read_only_fields = ['id', 'created_at']
     
+    extra_kwargs={
+            'password':{'write_only':True}
+        }
+
     def create(self, validated_data):# para encriptar la contraseña antes de que se almacene en Supabase.
         # usamos el algoritmo de Django
-        validated_data['password'] = make_password(validated_data['password'])
+       # validated_data['password'] = make_password(validated_data['password'])
+        raw_password = validated_data.pop('password')
+        hashed_password = bcrypt.hashpw(raw_password.encode('utf-8'), bcrypt.gensalt())
+        validated_data['password']=hashed_password.decode('utf-8')
+
+
+        user = User.objects.create(**validated_data)
         # Guarda el usuario con la contraseña ya protegida
         return super().create(validated_data)
+        return user
     
 
 
