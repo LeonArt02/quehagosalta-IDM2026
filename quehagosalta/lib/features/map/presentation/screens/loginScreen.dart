@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
 
       ToastService.success('Login exitoso');
 
-      Navigator.pushReplacementNamed(context, role.route);
+      Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
     } catch (e) {
       ToastService.error(e.toString());
     }
