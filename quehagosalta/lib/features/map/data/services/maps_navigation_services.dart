@@ -8,12 +8,13 @@ class MapsNavigationServices {
     required double originLng,
     required double destLat,
     required double destLng,
-    BuildContext? context, // Opcional, para mostrar un SnackBar en caso de error
+    BuildContext?
+    context, // Opcional, para mostrar un SnackBar en caso de error
   }) async {
     // URL de Google Maps
-    final String urlString = 
-        'https://www.google.com/maps/dir/?api=1&origin=$originLat,$originLng&destination=$destLat,$destLng&travelmode=driving';
-    
+    final String urlString =
+        'https://www.google.com/maps/dir/?api=1&origin=$originLat,$originLng&destination=$destLat,$destLng';
+
     final Uri googleMapsUrl = Uri.parse(urlString);
 
     try {
@@ -27,7 +28,11 @@ class MapsNavigationServices {
       debugPrint('Error al abrir Google Maps: $e');
       if (context != null && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo abrir Google Maps. Verifica tu conexión o instalación.')),
+          const SnackBar(
+            content: Text(
+              'No se pudo abrir Google Maps. Verifica tu conexión o instalación.',
+            ),
+          ),
         );
       }
     }
