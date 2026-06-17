@@ -11,7 +11,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.conf import settings
 from rest_framework import status
-import bcrypt
+from django.contrib.auth.hashers import check_password
 
 from .serializers import CategoriesSerializer, BussinesSerializer, RoleSerializer, UserSerializer
 from .models import Categories, Bussines, Role, UserHasRoles, User
@@ -156,12 +156,10 @@ def getCustomTokenForUser(user):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
-
     email = request.data.get('email')
     password = request.data.get('password')
 
     if not email or not password:
-
         return Response(
             {
                 "message": "Email y password son obligatorios",
@@ -171,11 +169,8 @@ def login(request):
         )
 
     try:
-
         user = User.objects.get(email=email)
-
     except User.DoesNotExist:
-
         return Response(
             {
                 "message": "El email o el password no son validos",
@@ -184,49 +179,38 @@ def login(request):
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    if bcrypt.checkpw(
-        password.encode('utf-8'),
-        user.password.encode('utf-8')
-    ):
-
+    
+    if check_password(password, user.password):
+        
+        
         refresh_token = getCustomTokenForUser(user)
         access_token = str(refresh_token.access_token)
 
+        
         roles = Role.objects.filter(userhasroles__user=user)
         roles_serializer = RoleSerializer(roles, many=True)
 
+        
         user_data = {
-
             "user": {
-
-                "id": user.id,
-                "firstName": user.firstName,
+                "id": str(user.id),
                 "lastName": user.lastName,
                 "email": user.email,
                 "phone": user.phone,
-
                 "image": (
                     f'http://{settings.GLOBAL_IP}:{settings.GLOBAL_HOST}{user.image}'
                     if user.image else None
                 ),
-
                 "notification_token": user.notification_token,
-
                 "roles": roles_serializer.data,
-
             },
-
             "token": "Bearer " + access_token
-
         }
 
-        return Response(
-            user_data,
-            status=status.HTTP_200_OK
-        )
+        return Response(user_data, status=status.HTTP_200_OK)
 
     else:
-
+        
         return Response(
             {
                 "message": "El email o el password no son validos",
@@ -234,3 +218,46 @@ def login(request):
             },
             status=status.HTTP_401_UNAUTHORIZED
         )
+
+@api_view(['POST'])
+def createbusiness(request):
+    try:
+        serializerBs = BussinesSerializer(data=request.data)
+
+        if serializerBs.is_valid():
+            is_bussines= request.data.get('is_business',True)
+            with transaction.atomic():
+                bussines = serializerBs.save()
+                target_user = get_object_or_404(User, firstName=request.data.get('firstName'))
+                Bussines.objects.create(bussines=bussines, user=target_user) # Vinculamos al usuario con su rol comerc
+            
+            refresh_token = getCustomTokenForUser(bussines)
+            access_token = str(refresh_token.access_token)
+
+            response_data = {
+                "bussines": {
+                    "id": str(bussines.id),
+                    "name": bussines.name, # Corregido: Mismo nombre del modelo
+                    "description": bussines.description,   # Corregido: Mismo nombre del modelo
+                    "address": bussines.address,
+                    "latitude": bussines.latitude,
+                    "longitude": bussines.longitude,
+                },
+                "token": "Bearer " + access_token
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+
+        error_messages = []
+        for field, errors in serializerBs.errors.items():
+            for error in errors:
+                error_messages.append(f"{field}: {error}")
+                
+        return Response({
+            "message": error_messages,
+            "statusCode": status.HTTP_400_BAD_REQUEST
+        }, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e:
+        return Response({
+            "message": f"Error crítico en el servidor: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
