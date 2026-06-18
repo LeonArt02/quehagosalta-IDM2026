@@ -9,19 +9,32 @@ class BussinesServices {
     return await _apiClient.get('/bussines/');
   }
 
-  Future<void> createBusiness({
+  Future<Map<String, dynamic>> completeBusinessProfile({
+    required String cuil,
+    required String imagePath,
+    required List<String> businessImagesPaths,
     required String name,
     required String description,
     required String address,
+    required String categoryId,
     required double latitude,
     required double longitude,
+    required String token,
   }) async {
-    await _apiClient.post('/bussines/create/', {
-      'name': name,
-      'description': description,
-      'address': address,
-      'latitude': latitude,
-      'longitude': longitude,
-    });
+    _apiClient.token = token.startsWith('Bearer') ? token : 'Bearer $token';
+
+    return await _apiClient.multipartPut(
+      endpoint: '/bussines/complete_profile/',
+      imagePath: imagePath,
+      fields: {
+        'cuil': cuil,
+        'name': name,
+        'description': description,
+        'address': address,
+        'category': categoryId,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+      },
+    );
   }
 }

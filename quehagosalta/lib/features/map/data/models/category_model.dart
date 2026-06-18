@@ -7,10 +7,11 @@ class CategoryModel {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
-      id: json['id'],
-      name: json['name'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? 'Sin Categoría',
       icon_key:
-          json['icon_key'], // Ojo acá: mapeá el 'icon_key' de Python a tu variable
+          json['icon_key'] ??
+          'default_icon', // Ojo acá: mapeá el 'icon_key' de Python a tu variable
     );
   }
 }

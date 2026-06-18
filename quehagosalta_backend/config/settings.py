@@ -26,6 +26,8 @@ SECRET_KEY = 'django-insecure-l#7i29l(%ixc_1q^)@61+z=(@n%7^jz3jm^by11k_%$)ds%ey$
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+GLOBAL_IP = '192.168.100.15'  # Tu IP local actual de la red de tu casa
+GLOBAL_HOST = '8000'
 
 # Application definition
 
@@ -38,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #agregados
     'rest_framework',
-    'Apis',
+    'Apis.apps.ApisConfig',
     'rest_framework_simplejwt',
 ]
 
@@ -93,7 +95,7 @@ REST_FRAMEWORK = {
 }
 
 # Le dice a Django que use el modelo CustomUser de la app 'api'
-#AUTH_USER_MODEL = 'Apis.CustomUser'
+AUTH_USER_MODEL = 'Apis.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -112,6 +114,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'id',     
+    'USER_ID_CLAIM': 'user_id'
+}
 
 
 

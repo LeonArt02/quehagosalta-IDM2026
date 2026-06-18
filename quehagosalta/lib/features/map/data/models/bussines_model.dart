@@ -24,9 +24,16 @@ class BussinesModel {
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       address: json['address'] ?? '',
-      isVerified: json['is_verified'] ?? false,
-      lat: json['latitude'],
-      lng: json['longitude'],
+      isVerified: json['is_verificated'] ?? json['is_verified'] ?? false,
+
+      lat: json['latitude'] != null
+          ? double.parse(json['latitude'].toString())
+          : -24.782126,
+      lng: json['longitude'] != null
+          ? double.parse(json['longitude'].toString())
+          : -65.423198,
+
+      // Si la categoría viene nula porque el borrador no la tiene, evita romper instanciando un modelo vacío
       category: CategoryModel.fromJson(json['category'] ?? {}),
     );
   }

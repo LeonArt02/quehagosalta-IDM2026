@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import render
 
@@ -13,8 +14,8 @@ from django.conf import settings
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 
-from .serializers import CategoriesSerializer, BussinesSerializer, RoleSerializer, UserSerializer
-from .models import Categories, Bussines, Role, UserHasRoles, User
+from .serializers import CategoriesSerializer, BussinesSerializer, RoleSerializer, UserSerializer, BusinessImageSerializer
+from .models import Categories, Bussines, Role, UserHasRoles, User, BusinessImage
 
 
 
@@ -43,31 +44,86 @@ class BussinesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user : self.request.user
-        base_query = Bussines.objects.select_related('category','owner') #consulta directa de (C,D)
+        queryset = Bussines.objects.select_related('category','owner').all()
 
         if self.action == 'List': #filtramos borradores
-            return base_query.filter(is_active=True)
+            return queryset.filter(is_active=True)
         
-        return base_query.all()
+        return queryset.all()
 
     @action(detail=False, methods=['patch', 'put'], permission_classes=[IsAuthenticated])
     def complete_profile(self, request):
+        user_instance = request.user
+        cuil_data = request.data.get('cuil')
+    # Capturamos la foto de perfil del dueño que viaja bajo la clave 'image'
+        profile_image_file = request.FILES.get('image') 
+    
+        if not cuil_data or not profile_image_file:
+            return Response(
+                {"message": "El CUIL y la Foto de Perfil son obligatorios para el alta comercial."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try: 
-            bussines_instance = Bussines.object.get(owner = request.user)
+            bussines_instance = Bussines.objects.get(owner=user_instance)
         except Bussines.DoesNotExist:
             return Response(
-                {"message": "No se encontró ningún negocio asociado a tu cuenta comercial."},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        serializer = self.get_serializer(bussines_instance, data=request.data, partial=True)
+              {"message": "No se encontró ningún borrador de negocio asociado a tu cuenta."},
+              status=status.HTTP_404_NOT_FOUND
+         )
         
-        if serializer.is_valid():
-            serializer.save(is_active = True)
-            return Response({
-                "message": "¡Perfil de negocio completado y activado con éxito!",
-                "business": serializer.data
-            }, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
+            # 1. Procesamos la foto de perfil del dueño (guardamos el string de la ruta)
+            # Aquí acoplás tu lógica de guardado físico o subida a Supabase
+                user_instance.cuil = cuil_data
+                user_instance.image = f"/uploads/profiles/{profile_image_file.name}"
+                user_instance.save()
+            
+            # 2. Actualizamos los datos básicos del local (Nombre, dirección, categoría, etc.)
+                serializer = self.get_serializer(bussines_instance, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save(is_active=True)
+                else:
+                    raise ValidationError(serializer.errors)
+            
+            # 3. EXTRAEMOS LAS FOTOS DE LA GALERÍA DEL LOCAL COMODAMENTE
+            # 'business_images' coincide exactamente con la lista enviada por tu multipart de Flutter
+                gallery_files = request.FILES.getlist('business_images')
+            
+                if len(gallery_files) > 5:
+                    return Response(
+                        {"message": "Puedes subir como máximo 5 imágenes de la galería de tu local."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                for index, file in enumerate(gallery_files):
+                # Generamos la URL/Ruta en formato string como lo espera tu modelo e BusinessImage
+                    computed_url = f"/uploads/business/{bussines_instance.id}_img_{index}_{file.name}"
+                
+                # Insertamos directo en la DB usando la estructura tradicional
+                    BusinessImage.objects.create(
+                      business=bussines_instance,  # Ajustado al source='business' de tu relación
+                      image_url=computed_url
+                    )
+            
+            # 4. RESPUESTA SERIALIZADA
+            # Traemos las imágenes recién insertadas mediante su serializador tradicional
+                all_images = bussines_instance.images.all()
+                images_serializer = BusinessImageSerializer(all_images, many=True)
+            
+                return Response({
+                    "success": True,
+                    "message": "¡Datos comerciales, local y galería activados con éxito en Salta!",
+                    "business": serializer.data,
+                    "images": images_serializer.data # Devuelve el arreglo de IDs y URLs de strings
+                }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+              {"message": f"Error al procesar el formulario: {str(e)}"},
+             status=status.HTTP_400_BAD_REQUEST
+            )
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -146,8 +202,6 @@ def get_custom_token_for_user(user):
 
 def getCustomTokenForUser(user):
     refresh_token = RefreshToken.for_user(user)
-    if 'user_id' in refresh_token.payload:
-        del refresh_token.payload['user_id']
     refresh_token.payload['id'] = str(user.id)
     refresh_token.payload['firstName'] = user.firstName
     return refresh_token
@@ -218,46 +272,3 @@ def login(request):
             },
             status=status.HTTP_401_UNAUTHORIZED
         )
-
-@api_view(['POST'])
-def createbusiness(request):
-    try:
-        serializerBs = BussinesSerializer(data=request.data)
-
-        if serializerBs.is_valid():
-            is_bussines= request.data.get('is_business',True)
-            with transaction.atomic():
-                bussines = serializerBs.save()
-                target_user = get_object_or_404(User, firstName=request.data.get('firstName'))
-                Bussines.objects.create(bussines=bussines, user=target_user) # Vinculamos al usuario con su rol comerc
-            
-            refresh_token = getCustomTokenForUser(bussines)
-            access_token = str(refresh_token.access_token)
-
-            response_data = {
-                "bussines": {
-                    "id": str(bussines.id),
-                    "name": bussines.name, # Corregido: Mismo nombre del modelo
-                    "description": bussines.description,   # Corregido: Mismo nombre del modelo
-                    "address": bussines.address,
-                    "latitude": bussines.latitude,
-                    "longitude": bussines.longitude,
-                },
-                "token": "Bearer " + access_token
-            }
-            return Response(response_data, status=status.HTTP_201_CREATED)
-
-        error_messages = []
-        for field, errors in serializerBs.errors.items():
-            for error in errors:
-                error_messages.append(f"{field}: {error}")
-                
-        return Response({
-            "message": error_messages,
-            "statusCode": status.HTTP_400_BAD_REQUEST
-        }, status=status.HTTP_400_BAD_REQUEST)
-        
-    except Exception as e:
-        return Response({
-            "message": f"Error crítico en el servidor: {str(e)}"
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -12,7 +12,7 @@ class ApiClient {
     final headers = {'Content-Type': 'application/json'};
 
     if (token != null) {
-      headers['Autorization'] = token!;
+      headers['Authorization'] = token!;
     }
 
     return headers;
@@ -44,17 +44,29 @@ class ApiClient {
     required String endpoint,
     required Map<String, String> fields,
     String? imagePath,
+    List<String>? businessImagesPaths,
   }) async {
     final uri = Uri.parse('$baseUrl$endpoint');
 
     final request = http.MultipartRequest('PUT', uri);
 
-    request.headers.addAll({'Authorization': token ?? ''});
-
+    if (token != null && token!.isNotEmpty) {
+      request.headers['Authorization'] = token!;
+    }
     request.fields.addAll(fields);
 
-    if (imagePath != null) {
+    if (imagePath != null && imagePath.isNotEmpty) {
       request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+    }
+
+    if (businessImagesPaths != null) {
+      for (String path in businessImagesPaths) {
+        if (path.isNotEmpty) {
+          request.files.add(
+            await http.MultipartFile.fromPath('business_images', path),
+          );
+        }
+      }
     }
 
     final streamedResponse = await request.send();

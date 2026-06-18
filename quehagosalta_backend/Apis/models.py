@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class Categories(models.Model):
@@ -29,7 +30,7 @@ class Role(models.Model):
     def __str__(self):
         return self.name
 
-class User(models.Model):
+class User(AbstractUser):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -37,8 +38,14 @@ class User(models.Model):
     )
     firstName = models.CharField(max_length=100) 
     lastName = models.CharField(max_length=100)
+
     email = models.EmailField(unique=True)
+    USERNAME_FIELD = 'email'  # 👈 El email pasa a ser el identificador único de Auth
+    REQUIRED_FIELDS = ['username']
+
     phone = models.CharField(max_length=20)
+
+    cuil = models.CharField(max_length=13, null=True, blank=True, unique=True)
 
     image = models.CharField(
         max_length=255,
@@ -58,7 +65,12 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'users' 
+        db_table = 'users'
+    
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.email 
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.firstName} ({self.email})"
@@ -111,7 +123,8 @@ class Bussines(models.Model):
         on_delete=models.PROTECT,
         related_name='bussines',
         null=True,   
-        blank=True
+        blank=True,
+        db_column='category_id'
     )
 
     owner = models.ForeignKey(
@@ -127,3 +140,12 @@ class Bussines(models.Model):
 
     def __str__(self):
         return self.name    
+
+class BusinessImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    bussines = models.ForeignKey(Bussines, on_delete=models.CASCADE, related_name='images')
+    image_url = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'business_images'

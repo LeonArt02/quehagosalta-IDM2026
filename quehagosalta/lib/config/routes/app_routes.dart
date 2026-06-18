@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:quehagosalta/features/map/presentation/screens/loginScreen.dart';
 import 'package:quehagosalta/features/map/presentation/screens/registerScreen.dart';
 import 'package:quehagosalta/features/map/presentation/screens/HomeScreen.dart';
-import 'package:quehagosalta/features/map/presentation/screens/businessRegisterPage.dart';
+import 'package:quehagosalta/features/auth/businessRegisterPage.dart';
+import 'package:quehagosalta/features/auth/owner_onboarding_screen.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -12,6 +13,7 @@ class AppRoutes {
   static const String homeScreen = '/home';
 
   static const String profile = '/profile';
+  static const String ownerOnboarding = '/owner_onboarding';
   static const String businessRegister = '/business_register';
 
   static Map<String, WidgetBuilder> routes = {
@@ -21,6 +23,7 @@ class AppRoutes {
 
     homeScreen: (_) => const Homescreen(),
 
+    ownerOnboarding: (_) => const OwnerOnboardingPage(),
     businessRegister: (_) => const BusinessRegisterPage(),
     /* 
     profile: (_) =>

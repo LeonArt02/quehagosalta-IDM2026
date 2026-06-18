@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
+import 'package:quehagosalta/features/map/data/providers/auth_provider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/bussines_detail_sheet.dart';
 import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
 import 'package:latlong2/latlong.dart';
@@ -24,15 +25,13 @@ class BusinessProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Usamos tu servicio sin modificarlo
       final Map<String, dynamic> response = await _service.getBussines();
-      
       // Django Rest Framework usualmente envía las listas paginadas dentro de la llave 'results'.
-      // Si tu API no usa paginación y envía otra llave como 'data', ajústalo aquí.
-      final List<dynamic> rawList = response['results'] ?? response['data'] ?? [];
-
-      _businesses = rawList.map((json) => BussinesModel.fromJson(json)).toList();
-      
+      final List<dynamic> rawList =
+          response['results'] ?? response['data'] ?? [];
+      _businesses = rawList
+          .map((json) => BussinesModel.fromJson(json))
+          .toList();
     } catch (e) {
       _errorMessage = 'Error al cargar los locales: $e';
       debugPrint(_errorMessage);
@@ -42,25 +41,34 @@ class BusinessProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> createBusiness({
+  Future<void> completeBusinessProfile({
+    required String cuil,
+    required String imagePath,
+    required List<String> businessImagesPaths,
     required String name,
     required String description,
     required String address,
-    required LatLng location,
-
+    required String categoryId,
+    required double latitude,
+    required double longitude,
+    required String authToken,
   }) async {
     _isLoading = true;
     _errorMessage = '';
     notifyListeners();
 
     try {
-      await _service.createBusiness(
+      await _service.completeBusinessProfile(
+        cuil: cuil,
+        imagePath: imagePath,
+        businessImagesPaths: businessImagesPaths,
         name: name,
         description: description,
         address: address,
-        latitude: location.latitude,
-        longitude: location.longitude,
-
+        categoryId: categoryId,
+        latitude: latitude,
+        longitude: longitude,
+        token: authToken,
       );
       // Recarga la lista de locales después de crear uno nuevo
       await loadBusinesses();

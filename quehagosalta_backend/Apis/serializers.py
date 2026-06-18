@@ -1,8 +1,9 @@
+from dataclasses import fields
 from dataclasses import field
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 
-from .models import Categories, Bussines, User, Role
+from .models import Categories, Bussines, User, Role, BusinessImage
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,9 +49,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BussinesSerializer(serializers.ModelSerializer):
 
-    category_id = serializers.PrimaryKeyRelatedField( #Reportar funcionamiento
+    category= serializers.PrimaryKeyRelatedField( #Reportar funcionamiento
         queryset=Categories.objects.all(),
-        source='categories',
         required=False,
         allow_null=True
     )
@@ -69,19 +69,39 @@ class BussinesSerializer(serializers.ModelSerializer):
             'is_verificated', 
             'is_active',   
             'owner',       
-            'category_id', 
+            'category', 
             'created_at', 
             'updated_at'
         ]
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        # Eliminamos el id de la salida limpia para que no confunda a Flutter
-        representation.pop('category_id', None)
-        # Si el local ya tiene asignada una categoría, la serializamos completa
+        
         if instance.category:
-            representation['category'] = CategoriesSerializer(instance.category).data
+            representation['category'] = {
+                'id': str(instance.category.id),
+                'name': instance.category.name,
+                'icon_key': instance.category.icon_key
+            }
         else:
             representation['category'] = None
-            
+        
         return representation
+        
+class BusinessImageSerializer(serializers.ModelSerializer):
+    
+    bussines_id= serializers.PrimaryKeyRelatedField( 
+        queryset=Bussines.objects.all(),
+        source='bussines',
+        required=False,
+        allow_null=True
+    )
+
+    class Meta:
+        model= BusinessImage
+        fields = [
+            'id',
+            'image_url',
+            'bussines_id',
+            'created_at'
+        ]
