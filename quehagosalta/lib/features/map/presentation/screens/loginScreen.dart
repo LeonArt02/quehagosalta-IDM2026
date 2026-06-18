@@ -131,6 +131,16 @@ class _LoginPageState extends State<LoginPage> {
 
                       child: const Text('Crear cuenta'),
                     ),
+
+                    const SizedBox(height: 20),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.homeScreen);
+                      },
+
+                      child: const Text('Ingresar como invitado'),
+                    ),
                   ],
                 ),
               ),
