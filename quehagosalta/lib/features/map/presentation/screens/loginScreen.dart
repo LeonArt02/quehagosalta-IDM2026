@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/features/map/data/providers/auth_provider.dart';
 import 'package:quehagosalta/core/validators/validator.dart';
-import 'package:quehagosalta/features/map/data/services/toast_service.dart';
+import 'package:quehagosalta/features/auth/data/services/toast_service.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_textfield.dart';
@@ -130,16 +130,6 @@ class _LoginPageState extends State<LoginPage> {
                       },
 
                       child: const Text('Crear cuenta'),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.homeScreen);
-                      },
-
-                      child: const Text('Ingresar como invitado'),
                     ),
                   ],
                 ),

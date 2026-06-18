@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 import 'package:quehagosalta/core/validators/validator.dart';
 import 'package:quehagosalta/features/map/data/providers/auth_provider.dart';
-import 'package:quehagosalta/features/map/data/services/toast_service.dart';
+import 'package:quehagosalta/features/auth/data/services/toast_service.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/CustomFlutterMap.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_textfield.dart';
@@ -98,6 +98,9 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
         ''; // Si por alguna razón es nulo, mandamos cadena vacía
 
     try {
+      print(
+        "DEBUG FLUTTER: Cantidad de fotos en la galería: ${_businessImages.length}",
+      );
       await businessProvider.completeBusinessProfile(
         cuil: cuil,
         imagePath: profileImage.path,

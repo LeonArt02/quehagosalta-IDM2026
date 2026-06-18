@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-l#7i29l(%ixc_1q^)@61+z=(@n%7^jz3jm^by11k_%$)ds%ey$
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-GLOBAL_IP = '192.168.100.15'  # Tu IP local actual de la red de tu casa
+GLOBAL_IP = '192.168.0.23'  # Tu IP local actual de la red de tu casa
 GLOBAL_HOST = '8000'
 
 # Application definition
@@ -87,6 +87,10 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+MEDIA_URL = '/uploads/'
+# La ruta física real en tu computadora donde se guardan los archivos
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

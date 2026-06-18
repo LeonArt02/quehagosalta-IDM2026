@@ -26,6 +26,7 @@ class BussinesServices {
     return await _apiClient.multipartPut(
       endpoint: '/bussines/complete_profile/',
       imagePath: imagePath,
+      galleryPaths: businessImagesPaths,
       fields: {
         'cuil': cuil,
         'name': name,

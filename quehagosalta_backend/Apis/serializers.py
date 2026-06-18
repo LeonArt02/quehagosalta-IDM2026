@@ -45,49 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
         # Guarda el usuario con la contraseña ya protegida
         return super().create(validated_data)
     
-
-
-class BussinesSerializer(serializers.ModelSerializer):
-
-    category= serializers.PrimaryKeyRelatedField( #Reportar funcionamiento
-        queryset=Categories.objects.all(),
-        required=False,
-        allow_null=True
-    )
-
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Bussines
-        fields = [
-            'id', 
-            'name', 
-            'description', 
-            'latitude', 
-            'longitude', 
-            'address', 
-            'is_verificated', 
-            'is_active',   
-            'owner',       
-            'category', 
-            'created_at', 
-            'updated_at'
-        ]
-    
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        
-        if instance.category:
-            representation['category'] = {
-                'id': str(instance.category.id),
-                'name': instance.category.name,
-                'icon_key': instance.category.icon_key
-            }
-        else:
-            representation['category'] = None
-        
-        return representation
-        
 class BusinessImageSerializer(serializers.ModelSerializer):
     
     bussines_id= serializers.PrimaryKeyRelatedField( 
@@ -105,3 +62,51 @@ class BusinessImageSerializer(serializers.ModelSerializer):
             'bussines_id',
             'created_at'
         ]
+    def to_representation(self, instance):
+        print(f"SERIALIZANDO IMAGEN: {instance.image_url} para negocio {instance.bussines.id}")
+        return super().to_representation(instance)
+
+class BussinesSerializer(serializers.ModelSerializer):
+
+    category= serializers.PrimaryKeyRelatedField( #Reportar funcionamiento
+        queryset=Categories.objects.all(),
+        required=False,
+        allow_null=True
+    )
+
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    images = BusinessImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Bussines
+        fields = [
+            'id', 
+            'name', 
+            'description', 
+            'latitude', 
+            'longitude', 
+            'address', 
+            'is_verificated', 
+            'is_active',   
+            'owner',       
+            'category',
+            'images', 
+            'created_at', 
+            'updated_at'
+        ]
+    read_only_fields = ['id', 'owner', 'created_at', 'updated_at']
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        if instance.category:
+            representation['category'] = {
+                'id': str(instance.category.id),
+                'name': instance.category.name,
+                'icon_key': instance.category.icon_key
+            }
+        else:
+            representation['category'] = None
+        
+        return representation
+        
+

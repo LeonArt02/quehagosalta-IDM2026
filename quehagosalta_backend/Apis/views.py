@@ -4,10 +4,14 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import viewsets
+import os;
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django.core.files.storage import FileSystemStorage
 from rest_framework_simplejwt.tokens import RefreshToken
+# pyrefly: ignore [missing-import]
 from rest_framework.response import Response
+# pyrefly: ignore [missing-import]
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.conf import settings
@@ -43,13 +47,17 @@ class BussinesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        user : self.request.user
-        queryset = Bussines.objects.select_related('category','owner').all()
+        # 1. Usamos prefetch_related para traer las imágenes y select_related para optimizar 
+        # las llaves foráneas (categoría y usuario) en una sola consulta SQL.
+        queryset = Bussines.objects.select_related('category', 'owner')\
+                                   .prefetch_related('images')\
+                                   .all()
 
-        if self.action == 'List': #filtramos borradores
+        # 2. Corregimos el nombre de la acción a 'list' (minúsculas)
+        if self.action == 'list': 
             return queryset.filter(is_active=True)
         
-        return queryset.all()
+        return queryset
 
     @action(detail=False, methods=['patch', 'put'], permission_classes=[IsAuthenticated])
     def complete_profile(self, request):
@@ -89,7 +97,9 @@ class BussinesViewSet(viewsets.ModelViewSet):
             
             # 3. EXTRAEMOS LAS FOTOS DE LA GALERÍA DEL LOCAL COMODAMENTE
             # 'business_images' coincide exactamente con la lista enviada por tu multipart de Flutter
+                print("DEBUG DJANGO: Llaves en request.FILES:", request.FILES.keys())
                 gallery_files = request.FILES.getlist('business_images')
+                print(f"DEBUG DJANGO: Cantidad de archivos detectados bajo 'business_images': {len(gallery_files)}")
             
                 if len(gallery_files) > 5:
                     return Response(
@@ -98,12 +108,16 @@ class BussinesViewSet(viewsets.ModelViewSet):
                     )
                 
                 for index, file in enumerate(gallery_files):
+                    #Inicializamos el motor de guardado de archivos de Django
+                    fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'business'))
+                    filename = f"{bussines_instance.id}_img_{index}_{file.name}"
+                    saved_name = fs.save(filename, file)
                 # Generamos la URL/Ruta en formato string como lo espera tu modelo e BusinessImage
-                    computed_url = f"/uploads/business/{bussines_instance.id}_img_{index}_{file.name}"
-                
+                    computed_url = f"/uploads/business/{saved_name}"
+                    print(f"DEBUG: Guardando imagen '{file.name}' para negocio ID: {bussines_instance.id}")
                 # Insertamos directo en la DB usando la estructura tradicional
                     BusinessImage.objects.create(
-                      business=bussines_instance,  # Ajustado al source='business' de tu relación
+                      bussines=bussines_instance,  # Ajustado al source='business' de tu relación
                       image_url=computed_url
                     )
             

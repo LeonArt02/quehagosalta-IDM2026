@@ -102,6 +102,7 @@ class UserHasRoles(models.Model):
     def __str__(self):
         return f"{self.user.email} -> {self.role.name}"
 
+
 class Bussines(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -143,7 +144,7 @@ class Bussines(models.Model):
 
 class BusinessImage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    bussines = models.ForeignKey(Bussines, on_delete=models.CASCADE, related_name='images')
+    bussines = models.ForeignKey(Bussines, on_delete=models.CASCADE, related_name='images', db_column='bussines_id')
     image_url = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 

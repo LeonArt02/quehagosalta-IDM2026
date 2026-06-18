@@ -44,7 +44,7 @@ class ApiClient {
     required String endpoint,
     required Map<String, String> fields,
     String? imagePath,
-    List<String>? businessImagesPaths,
+    List<String>? galleryPaths,
   }) async {
     final uri = Uri.parse('$baseUrl$endpoint');
 
@@ -59,9 +59,15 @@ class ApiClient {
       request.files.add(await http.MultipartFile.fromPath('image', imagePath));
     }
 
-    if (businessImagesPaths != null) {
-      for (String path in businessImagesPaths) {
+    // En tu api_client.dart
+    print("DEBUG API CLIENT: galleryPaths es null? ${galleryPaths == null}");
+    if (galleryPaths != null) {
+      print(
+        "DEBUG API CLIENT: Cantidad de archivos a procesar: ${galleryPaths.length}",
+      );
+      for (String path in galleryPaths) {
         if (path.isNotEmpty) {
+          print("DEBUG API CLIENT: Procesando archivo: $path");
           request.files.add(
             await http.MultipartFile.fromPath('business_images', path),
           );

@@ -8,6 +8,7 @@ class BussinesModel {
   final double lat;
   final double lng;
   final CategoryModel category;
+  final List<String> imageUrls;
 
   BussinesModel({
     required this.name,
@@ -17,6 +18,7 @@ class BussinesModel {
     required this.lat,
     required this.lng,
     required this.category,
+    required this.imageUrls,
   });
 
   factory BussinesModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,11 @@ class BussinesModel {
 
       // Si la categoría viene nula porque el borrador no la tiene, evita romper instanciando un modelo vacío
       category: CategoryModel.fromJson(json['category'] ?? {}),
+      imageUrls:
+          (json['images'] as List<dynamic>?)
+              ?.map((img) => img['image_url'] as String)
+              .toList() ??
+          [],
     );
   }
 }

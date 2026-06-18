@@ -30,6 +30,9 @@ class BussinesDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(
+      "DEBUG UI: Abriendo detalle de ${bussines.name}. Cantidad de URLs de fotos: ${bussines.imageUrls.length}",
+    );
     return DraggableScrollableSheet(
       initialChildSize: 0.4, // Ocupa el 40% de la pantalla al abrir
       minChildSize: 0.3, // Mínimo al que se puede reducir antes de cerrarse
@@ -56,6 +59,48 @@ class BussinesDetailSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // 🖼️ Galería de Fotos del Local
+              if (bussines.imageUrls.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 180, // Altura de las fotos
+                  child: PageView.builder(
+                    itemCount: bussines.imageUrls.length,
+                    itemBuilder: (context, index) {
+                      print(
+                        "DEBUG UI CELL: Renderizando imagen index [$index] -> http://192.168.100.15:8000${bussines.imageUrls[index]}",
+                      );
+                      return Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.grey[200],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Image.network(
+                            "http://192.168.100.15:8000${bussines.imageUrls[index]}",
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              print(
+                                "DEBUG UI ERROR: Falló la descarga de la imagen: $error",
+                              );
+                              return const Center(
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
 
               // Encabezado: Nombre y Badge de Verificación
               Row(

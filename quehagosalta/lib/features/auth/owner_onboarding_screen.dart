@@ -5,7 +5,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_textfield.dart';
-import 'package:quehagosalta/features/map/data/services/toast_service.dart';
+import 'package:quehagosalta/features/auth/data/services/toast_service.dart';
 
 class OwnerOnboardingPage extends StatefulWidget {
   const OwnerOnboardingPage({super.key});
