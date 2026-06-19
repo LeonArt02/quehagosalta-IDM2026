@@ -13,7 +13,7 @@ import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 
 void main() {
-  final apiClient = ApiClient(baseUrl: 'http://10.120.142.96:8000/api/v1');
+  final apiClient = ApiClient(baseUrl: 'http://10.120.160.98:8000/api/v1');
   final categotyservices = CategoryServices(apiClient);
   final bussinesServices = BussinesServices(apiClient);
   final authService = AuthService(apiClient);

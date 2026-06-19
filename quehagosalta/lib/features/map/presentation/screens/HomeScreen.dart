@@ -46,8 +46,27 @@ class Homescreen extends StatelessWidget {
                 bottom: 20,
                 left: 10,
                 child: FloatingActionButton.extended(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, AppRoutes.ownerOnboarding),
+                  onPressed: () {
+                    final bool hasOwnerData =
+                        user?.cuil != null &&
+                        user!.cuil!.isNotEmpty &&
+                        user.profileImage != null &&
+                        user.profileImage!.isNotEmpty;
+                    if (hasOwnerData) {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.businessRegister,
+                        arguments: {
+                          'cuil': user.cuil,
+                          'profileImage': null,
+                          'isFromProfile': true,
+                        },
+                      );
+                    } else {
+                      Navigator.pushNamed(context, AppRoutes.ownerOnboarding);
+                    }
+                  },
+
                   backgroundColor: Colors.orange,
                   elevation: 6,
                   icon: const Icon(Icons.assignment_late, color: Colors.white),

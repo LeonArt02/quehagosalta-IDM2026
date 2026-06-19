@@ -30,9 +30,6 @@ class BussinesDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(
-      "DEBUG UI: Abriendo detalle de ${bussines.name}. Cantidad de URLs de fotos: ${bussines.imageUrls.length}",
-    );
     return DraggableScrollableSheet(
       initialChildSize: 0.4, // Ocupa el 40% de la pantalla al abrir
       minChildSize: 0.3, // Mínimo al que se puede reducir antes de cerrarse
@@ -68,9 +65,6 @@ class BussinesDetailSheet extends StatelessWidget {
                   child: PageView.builder(
                     itemCount: bussines.imageUrls.length,
                     itemBuilder: (context, index) {
-                      print(
-                        "DEBUG UI CELL: Renderizando imagen index [$index] -> http://10.120.91.2:8000${bussines.imageUrls[index]}",
-                      );
                       return Container(
                         margin: const EdgeInsets.only(right: 10),
                         decoration: BoxDecoration(
@@ -80,12 +74,9 @@ class BussinesDetailSheet extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: Image.network(
-                            "http://10.120.91.2:8000${bussines.imageUrls[index]}",
+                            "http://10.120.160.98:8000${bussines.imageUrls[index]}",
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              print(
-                                "DEBUG UI ERROR: Falló la descarga de la imagen: $error",
-                              );
                               return const Center(
                                 child: Icon(
                                   Icons.broken_image,

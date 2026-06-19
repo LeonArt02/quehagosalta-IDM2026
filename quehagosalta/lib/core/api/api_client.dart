@@ -59,15 +59,9 @@ class ApiClient {
       request.files.add(await http.MultipartFile.fromPath('image', imagePath));
     }
 
-    // En tu api_client.dart
-    print("DEBUG API CLIENT: galleryPaths es null? ${galleryPaths == null}");
     if (galleryPaths != null) {
-      print(
-        "DEBUG API CLIENT: Cantidad de archivos a procesar: ${galleryPaths.length}",
-      );
       for (String path in galleryPaths) {
         if (path.isNotEmpty) {
-          print("DEBUG API CLIENT: Procesando archivo: $path");
           request.files.add(
             await http.MultipartFile.fromPath('business_images', path),
           );

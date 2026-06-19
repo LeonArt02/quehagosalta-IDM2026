@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/utils/icon_mapper.dart';
 import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
+import 'package:quehagosalta/features/map/presentation/widgets/userAvatarWidget.dart';
 import 'category_button.dart';
 
 class TopBarWidget extends StatefulWidget {
@@ -54,6 +55,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                   },
                 ),
               ),
+            const UserAvatarButton(),
           ],
         ),
       ),

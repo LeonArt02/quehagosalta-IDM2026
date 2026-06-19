@@ -11,7 +11,7 @@ class BussinesServices {
 
   Future<Map<String, dynamic>> completeBusinessProfile({
     required String cuil,
-    required String imagePath,
+    String? imagePath,
     required List<String> businessImagesPaths,
     required String name,
     required String description,
@@ -25,7 +25,7 @@ class BussinesServices {
 
     return await _apiClient.multipartPut(
       endpoint: '/bussines/complete_profile/',
-      imagePath: imagePath,
+      imagePath: (imagePath != null && imagePath.isNotEmpty) ? imagePath : null,
       galleryPaths: businessImagesPaths,
       fields: {
         'cuil': cuil,

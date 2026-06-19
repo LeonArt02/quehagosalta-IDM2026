@@ -98,9 +98,6 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
         ''; // Si por alguna razón es nulo, mandamos cadena vacía
 
     try {
-      print(
-        "DEBUG FLUTTER: Cantidad de fotos en la galería: ${_businessImages.length}",
-      );
       await businessProvider.completeBusinessProfile(
         cuil: cuil,
         imagePath: profileImage.path,
@@ -135,7 +132,8 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
   Widget build(BuildContext context) {
     // 1. Recorremos los datos heredados del Paso 1 (OwnerOnboardingPage)
     final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic> ??
+        {};
     final String cuil = args['cuil'];
     final File profileImage = args['profileImage'];
 
@@ -216,7 +214,6 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                       }).toList(),
                       onChanged: (val) => {
                         setState(() => _selectedCategoryId = val),
-                        print("DEBUG: Valor seleccionado en Dropdown: $val"),
                       },
                     ),
                     const SizedBox(height: 20),
@@ -235,9 +232,7 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                     ),
                     const SizedBox(height: 25),
 
-                    // ==========================================
-                    // APARTADO INTERACTIVO DE IMÁGENES (MÁXIMO 5)
-                    // ==========================================
+                    // IMÁGENES (MÁXIMO 5)
                     const Text(
                       'Fotos de tu Local (Máximo 5) *',
                       style: TextStyle(
@@ -315,9 +310,7 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                     ),
                     const SizedBox(height: 25),
 
-                    // ==========================================
-                    // MAPA BASE REUTILIZADO CON PIN CENTRAL ESTÁTICO
-                    // ==========================================
+                    // MAPA BASE
                     const Text(
                       'Ubica tu local en el mapa (Mueve el mapa bajo el pin) *',
                       style: TextStyle(

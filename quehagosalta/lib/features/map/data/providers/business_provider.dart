@@ -43,7 +43,7 @@ class BusinessProvider extends ChangeNotifier {
 
   Future<void> completeBusinessProfile({
     required String cuil,
-    required String imagePath,
+    String? imagePath,
     required List<String> businessImagesPaths,
     required String name,
     required String description,

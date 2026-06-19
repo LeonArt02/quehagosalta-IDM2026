@@ -83,8 +83,12 @@ class AuthProvider extends ChangeNotifier {
       rethrow;
     } finally {
       _isLoading = false;
-      notifyListeners();
     }
+  }
+
+  void updateCurrentUser(UserModel updatedUser) {
+    _currentUser = updatedUser;
+    notifyListeners();
   }
 
   /// Activa el modo anónimo/invitado para explorar la app
