@@ -11,9 +11,10 @@ import 'package:quehagosalta/features/map/data/providers/business_provider.dart'
 import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
 import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
+import 'package:quehagosalta/core/api/api_config.dart';
 
 void main() {
-  final apiClient = ApiClient(baseUrl: 'http://10.120.160.101:8000/api/v1');
+  final apiClient = ApiClient(baseUrl: 'http://${ApiConfig.ipConfigurable}:8000/api/v1');
   final categotyservices = CategoryServices(apiClient);
   final bussinesServices = BussinesServices(apiClient);
   final authService = AuthService(apiClient);

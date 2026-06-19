@@ -58,15 +58,9 @@ class _mapBaseWidget extends State<MapBaseWidget> {
         width: 45,
         height: 45,
         alignment: Alignment.center,
-        child: GestureDetector(
+          child: GestureDetector(
           onTap: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => BussinesDetailSheet(
-                bussines: business,
-                userLocation: userLatLng,
-              ),
-            );
+            BussinesDetailSheet.show(context, business, userLatLng);
           },
           child: BusinessMarkerWidget(business: business),
         ),
