@@ -15,9 +15,26 @@ class BusinessProvider extends ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = '';
 
-  List<BussinesModel> get businesses => _businesses;
+  List<BussinesModel> get allBusinesses => _businesses;
+  String? _selectedCategoryId;
+
+  String? get selectedCategoryId => _selectedCategoryId;
+
+  List<BussinesModel> get businesses {
+    if (_selectedCategoryId == null) return _businesses;
+    return _businesses
+        .where((business) => business.category.id == _selectedCategoryId)
+        .toList();
+  }
+
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
+
+  void setCategoryFilter(String? categoryId) {
+    if (_selectedCategoryId == categoryId) return;
+    _selectedCategoryId = categoryId;
+    notifyListeners();
+  }
 
   Future<void> loadBusinesses() async {
     _isLoading = true;
@@ -26,7 +43,6 @@ class BusinessProvider extends ChangeNotifier {
 
     try {
       final Map<String, dynamic> response = await _service.getBussines();
-      // Django Rest Framework usualmente envía las listas paginadas dentro de la llave 'results'.
       final List<dynamic> rawList =
           response['results'] ?? response['data'] ?? [];
       _businesses = rawList
