@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/api/api_client.dart';
-import 'package:quehagosalta/features/map/data/providers/auth_provider.dart';
+import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
@@ -13,7 +13,7 @@ import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 
 void main() {
-  final apiClient = ApiClient(baseUrl: 'http://192.168.0.23:8000/api/v1');
+  final apiClient = ApiClient(baseUrl: 'http://10.120.142.96:8000/api/v1');
   final categotyservices = CategoryServices(apiClient);
   final bussinesServices = BussinesServices(apiClient);
   final authService = AuthService(apiClient);

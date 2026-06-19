@@ -97,29 +97,27 @@ class BussinesViewSet(viewsets.ModelViewSet):
             
             # 3. EXTRAEMOS LAS FOTOS DE LA GALERÍA DEL LOCAL COMODAMENTE
             # 'business_images' coincide exactamente con la lista enviada por tu multipart de Flutter
-                print("DEBUG DJANGO: Llaves en request.FILES:", request.FILES.keys())
-                gallery_files = request.FILES.getlist('business_images')
-                print(f"DEBUG DJANGO: Cantidad de archivos detectados bajo 'business_images': {len(gallery_files)}")
-            
-                if len(gallery_files) > 5:
-                    return Response(
-                        {"message": "Puedes subir como máximo 5 imágenes de la galería de tu local."},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-                
+                # 📁 En Apis/views.py (dentro de complete_profile)
+
+            gallery_files = request.FILES.getlist('business_images')
+
+            if gallery_files:
+    # 🌟 PASO CRÍTICO: Borramos los registros anteriores de imágenes para este negocio
+    # Esto asegura que si mandás 2 imágenes, se queden SOLO las 2 que mandaste ahora.
+                BusinessImage.objects.filter(bussines=bussines_instance).delete()
+    
+    # Procedemos a guardar físicamente y registrar en la DB
                 for index, file in enumerate(gallery_files):
-                    #Inicializamos el motor de guardado de archivos de Django
                     fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'business'))
                     filename = f"{bussines_instance.id}_img_{index}_{file.name}"
                     saved_name = fs.save(filename, file)
-                # Generamos la URL/Ruta en formato string como lo espera tu modelo e BusinessImage
+        
                     computed_url = f"/uploads/business/{saved_name}"
-                    print(f"DEBUG: Guardando imagen '{file.name}' para negocio ID: {bussines_instance.id}")
-                # Insertamos directo en la DB usando la estructura tradicional
+        
                     BusinessImage.objects.create(
-                      bussines=bussines_instance,  # Ajustado al source='business' de tu relación
-                      image_url=computed_url
-                    )
+                    bussines=bussines_instance, 
+                    image_url=computed_url
+                    )    
             
             # 4. RESPUESTA SERIALIZADA
             # Traemos las imágenes recién insertadas mediante su serializador tradicional

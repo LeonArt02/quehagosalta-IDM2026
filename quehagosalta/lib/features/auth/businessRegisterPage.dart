@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 import 'package:quehagosalta/core/validators/validator.dart';
-import 'package:quehagosalta/features/map/data/providers/auth_provider.dart';
+import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
 import 'package:quehagosalta/features/auth/data/services/toast_service.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/CustomFlutterMap.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';

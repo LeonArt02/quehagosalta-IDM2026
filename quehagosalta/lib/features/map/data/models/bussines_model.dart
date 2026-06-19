@@ -9,6 +9,8 @@ class BussinesModel {
   final double lng;
   final CategoryModel category;
   final List<String> imageUrls;
+  final bool isActive;
+  final String owner;
 
   BussinesModel({
     required this.name,
@@ -17,6 +19,8 @@ class BussinesModel {
     required this.isVerified,
     required this.lat,
     required this.lng,
+    required this.owner,
+    required this.isActive,
     required this.category,
     required this.imageUrls,
   });
@@ -27,14 +31,14 @@ class BussinesModel {
       description: json['description'] ?? '',
       address: json['address'] ?? '',
       isVerified: json['is_verificated'] ?? json['is_verified'] ?? false,
-
+      isActive: json['is_active'] ?? false,
       lat: json['latitude'] != null
           ? double.parse(json['latitude'].toString())
           : -24.782126,
       lng: json['longitude'] != null
           ? double.parse(json['longitude'].toString())
           : -65.423198,
-
+      owner: json['owner'] ?? '',
       // Si la categoría viene nula porque el borrador no la tiene, evita romper instanciando un modelo vacío
       category: CategoryModel.fromJson(json['category'] ?? {}),
       imageUrls:

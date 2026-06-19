@@ -69,7 +69,7 @@ class BussinesDetailSheet extends StatelessWidget {
                     itemCount: bussines.imageUrls.length,
                     itemBuilder: (context, index) {
                       print(
-                        "DEBUG UI CELL: Renderizando imagen index [$index] -> http://192.168.100.15:8000${bussines.imageUrls[index]}",
+                        "DEBUG UI CELL: Renderizando imagen index [$index] -> http://10.120.91.2:8000${bussines.imageUrls[index]}",
                       );
                       return Container(
                         margin: const EdgeInsets.only(right: 10),
@@ -80,7 +80,7 @@ class BussinesDetailSheet extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: Image.network(
-                            "http://192.168.100.15:8000${bussines.imageUrls[index]}",
+                            "http://10.120.91.2:8000${bussines.imageUrls[index]}",
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               print(
