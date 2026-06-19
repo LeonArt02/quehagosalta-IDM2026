@@ -63,10 +63,18 @@ class BussinesViewSet(viewsets.ModelViewSet):
     def complete_profile(self, request):
         user_instance = request.user
         cuil_data = request.data.get('cuil')
-    # Capturamos la foto de perfil del dueño que viaja bajo la clave 'image'
-        profile_image_file = request.FILES.get('image') 
-    
-        if not cuil_data or not profile_image_file:
+        profile_image_file = request.FILES.get('image') or request.FILES.get('profileImage') 
+
+        print("--- DEBUG COMPLETE PROFILE ---")
+        print(f"User ID: {user_instance.id}")
+        print(f"CUIL enviado en Request: '{cuil_data}' | CUIL en la DB de Supabase: '{user_instance.cuil}'")
+        print(f"Foto enviada en Request: {profile_image_file} | Foto en la DB de Supabase: '{user_instance.image}'")
+
+        final_cuil = cuil_data if cuil_data else user_instance.cuil #evaluamos el cuil y imagen del usuario
+        has_profile_image = bool(profile_image_file) or bool(user_instance.image)
+
+        
+        if not final_cuil or not has_profile_image:
             return Response(
                 {"message": "El CUIL y la Foto de Perfil son obligatorios para el alta comercial."},
                 status=status.HTTP_400_BAD_REQUEST
@@ -84,8 +92,17 @@ class BussinesViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
             # 1. Procesamos la foto de perfil del dueño (guardamos el string de la ruta)
             # Aquí acoplás tu lógica de guardado físico o subida a Supabase
-                user_instance.cuil = cuil_data
-                user_instance.image = f"/uploads/profiles/{profile_image_file.name}"
+                if cuil_data:
+                    user_instance.cuil = cuil_data
+
+                if profile_image_file:
+                    fs_profile = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'profiles'))
+                    # Renombramos por seguridad para evitar colisiones
+                    profile_filename = f"user_{user_instance.id}_{profile_image_file.name}"
+                    saved_profile = fs_profile.save(profile_filename, profile_image_file)
+                    
+                    # Recuerda emparejar la clave de imagen ('image' o 'profile_image' según tu refactorización de compatibilidad)
+                    user_instance.image = f"/uploads/profiles/{saved_profile}"
                 user_instance.save()
             
             # 2. Actualizamos los datos básicos del local (Nombre, dirección, categoría, etc.)
@@ -175,7 +192,7 @@ def register(request):
             response_data = {
                 "user": {
                     "id": str(user.id),
-                    "firstName": user.firstName, # Corregido: Mismo nombre del modelo
+                    "firstName": user.firstName, 
                     "lastName": user.lastName,   # Corregido: Mismo nombre del modelo
                     "email": user.email,
                     "phone": user.phone,

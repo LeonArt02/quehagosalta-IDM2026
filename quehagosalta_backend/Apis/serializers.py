@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         required=True, 
         style={'input_type': 'password'}
     )
-    
+    roles = serializers.SerializerMethodField(read_only=True)
     class Meta :
         model = User
         fields = [
@@ -34,11 +34,25 @@ class UserSerializer(serializers.ModelSerializer):
             'phone', 
             'password', 
             'image', 
+            'cuil',
+            'roles',
             'notification_token', 
             'created_at'
             ]
         read_only_fields = ['id', 'created_at']
-    
+
+    def get_roles(self, obj):
+        try:
+            # Django mapea la relación inversa uniendo el nombre del modelo en minúsculas + '_set'
+            return [
+                {
+                    "id": str(u_role.role.id), 
+                    "name": u_role.role.name
+                } for u_role in obj.userhasroles_set.all()
+            ]
+        except Exception:
+            return []
+
     def create(self, validated_data):# para encriptar la contraseña antes de que se almacene en Supabase.
         # usamos el algoritmo de Django
         validated_data['password'] = make_password(validated_data['password'])
@@ -63,7 +77,6 @@ class BusinessImageSerializer(serializers.ModelSerializer):
             'created_at'
         ]
     def to_representation(self, instance):
-        print(f"SERIALIZANDO IMAGEN: {instance.image_url} para negocio {instance.bussines.id}")
         return super().to_representation(instance)
 
 class BussinesSerializer(serializers.ModelSerializer):
