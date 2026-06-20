@@ -24,7 +24,7 @@ class Homescreen extends StatelessWidget {
 
     bool hasCompletedRegistration = false;
     if (isBusinessUser && user != null) {
-      hasCompletedRegistration = businessProvider.businesses.any(
+      hasCompletedRegistration = businessProvider.businessesWithoutFilter.any(
         (b) => b.owner == user.id && b.isActive == true,
       );
     }

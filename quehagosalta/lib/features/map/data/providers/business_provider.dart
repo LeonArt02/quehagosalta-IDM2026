@@ -12,20 +12,23 @@ class BusinessProvider extends ChangeNotifier {
   BusinessProvider(this._service);
 
   List<BussinesModel> _businesses = [];
+  List<BussinesModel> _filteredBusinesses = [];
   bool _isLoading = false;
   String _errorMessage = '';
 
   List<BussinesModel> get allBusinesses => _businesses;
+  List<BussinesModel> get filteredBusinesses => _filteredBusinesses;
+
   String? _selectedCategoryId;
 
   String? get selectedCategoryId => _selectedCategoryId;
 
   List<BussinesModel> get businesses {
     if (_selectedCategoryId == null) return _businesses;
-    return _businesses
-        .where((business) => business.category.id == _selectedCategoryId)
+    else return _filteredBusinesses.where((business) => business.category.id == _selectedCategoryId)
         .toList();
   }
+  List<BussinesModel> get businessesWithoutFilter => _businesses;
 
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
@@ -48,6 +51,7 @@ class BusinessProvider extends ChangeNotifier {
       _businesses = rawList
           .map((json) => BussinesModel.fromJson(json))
           .toList();
+      _filteredBusinesses = List.from(_businesses);
     } catch (e) {
       _errorMessage = 'Error al cargar los locales: $e';
       debugPrint(_errorMessage);
