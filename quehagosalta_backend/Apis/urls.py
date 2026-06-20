@@ -1,6 +1,9 @@
 from django.urls import path, include
 # pyrefly: ignore [missing-import]
 from rest_framework.routers import DefaultRouter
+
+
+
 from .views import CategoriesViewSet, BussinesViewSet, register, login,RoleViewSet
 # enrutador automático
 router = DefaultRouter()

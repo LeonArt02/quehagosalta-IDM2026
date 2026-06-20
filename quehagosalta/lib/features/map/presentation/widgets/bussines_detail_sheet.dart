@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
 import 'package:quehagosalta/features/map/data/services/maps_navigation_services.dart';
+import 'package:quehagosalta/features/map/presentation/widgets/fullscreen_image_viewer.dart';
+import 'package:quehagosalta/core/api/api_config.dart';
 
 class BussinesDetailSheet extends StatelessWidget {
   final BussinesModel bussines;
@@ -31,9 +33,9 @@ class BussinesDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.4, // Ocupa el 40% de la pantalla al abrir
+      initialChildSize: 0.5, // Ocupa el 50% de la pantalla al abrir
       minChildSize: 0.3, // Mínimo al que se puede reducir antes de cerrarse
-      maxChildSize: 0.85, // Máximo al expandirse
+      maxChildSize: 0.95, // Máximo al expandirse
       builder: (_, controller) {
         return Container(
           decoration: const BoxDecoration(
@@ -57,33 +59,53 @@ class BussinesDetailSheet extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // 🖼️ Galería de Fotos del Local
+              // Fotos
               if (bussines.imageUrls.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 SizedBox(
-                  height: 180, // Altura de las fotos
+                  height: 220, // Altura de las fotos
                   child: PageView.builder(
                     itemCount: bussines.imageUrls.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.only(right: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.grey[200],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                            "http://10.120.160.98:8000${bussines.imageUrls[index]}",
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Center(
-                                child: Icon(
-                                  Icons.broken_image,
-                                  color: Colors.grey,
-                                ),
-                              );
-                            },
+                      final imagePath = bussines.imageUrls[index];
+                      final fullUrl =
+                          "http://${ApiConfig.ipConfigurable}:8000$imagePath";
+                      final heroTag = 'bussines-image-$fullUrl';
+                      // al hacer tapear en una foto, se abre el visuzalizador en pantalla completa
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => FullscreenImageViewer(
+                                imageUrl: fullUrl,
+                                tag: heroTag,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.grey[200],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Hero(
+                              tag: heroTag,
+                              child: Image.network(
+                                fullUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
                       );

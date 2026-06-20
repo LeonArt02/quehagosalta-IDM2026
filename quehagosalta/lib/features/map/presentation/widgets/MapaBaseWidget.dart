@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/utils/icon_mapper.dart';
 import 'user-location-marker.dart';
 import 'CustomFlutterMap.dart';
+import 'package:quehagosalta/features/map/data/models/category_model.dart';
 
 class MapBaseWidget extends StatefulWidget {
   const MapBaseWidget({super.key});
@@ -21,6 +22,7 @@ class MapBaseWidget extends StatefulWidget {
 
 class _mapBaseWidget extends State<MapBaseWidget> {
   final MapController _mapController = MapController();
+  // :D
 
   void initState() {
     super.initState();
@@ -56,15 +58,9 @@ class _mapBaseWidget extends State<MapBaseWidget> {
         width: 45,
         height: 45,
         alignment: Alignment.center,
-        child: GestureDetector(
+          child: GestureDetector(
           onTap: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => BussinesDetailSheet(
-                bussines: business,
-                userLocation: userLatLng,
-              ),
-            );
+            BussinesDetailSheet.show(context, business, userLatLng);
           },
           child: BusinessMarkerWidget(business: business),
         ),
