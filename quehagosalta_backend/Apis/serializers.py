@@ -4,7 +4,7 @@ from dataclasses import field
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 
-from .models import Categories, Bussines, User, Role, BusinessImage
+from .models import Categories, Bussines, User, Role, BusinessImage, Review
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -128,3 +128,33 @@ class BussinesSerializer(serializers.ModelSerializer):
         return representation
         
 
+class ReviewSerializer(serializers.ModelSerializer):
+    bussines = serializers.PrimaryKeyRelatedField(
+        queryset=Bussines.objects.all(), 
+        required=True)
+    
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True)
+    
+    class Meta:
+        model = Review
+        fields = ['id', 
+                  'user', 
+                  'bussines', 
+                  'rate', 
+                  'description', 
+                  'created_at'
+                ]
+        
+        read_only_fields = ['id', 'user', 'created_at']
+        
+    def toRepresentation(self, instance):
+        representation = super().to_representation(instance)
+        
+        if instance.user:
+            representation['user'] = {
+                'id': str(instance.user.id),
+                'username': instance.user.firstName + ' ' + instance.user.lastName,
+            }
+
+        return representation
