@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.shortcuts import render
 
 # Create your views here.
@@ -18,8 +18,8 @@ from django.conf import settings
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 
-from .serializers import CategoriesSerializer, BussinesSerializer, RoleSerializer, UserSerializer, BusinessImageSerializer
-from .models import Categories, Bussines, Role, UserHasRoles, User, BusinessImage
+from .serializers import CategoriesSerializer, BussinesSerializer, ReviewSerializer, RoleSerializer, UserSerializer, BusinessImageSerializer
+from .models import Categories, Bussines, Role, UserHasRoles, User, BusinessImage, Review
 
 
 
@@ -284,3 +284,37 @@ def login(request):
             },
             status=status.HTTP_401_UNAUTHORIZED
         )
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+    # # Cualquiera puede ver las reseñas, pero solo logueados pueden crear/editar
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    def get_queryset(self):
+        return Review.objects.select_related('user', 'bussines').all()
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            try:
+                review_instance =serializer.save(user=request.user)  # Asignamos el usuario logueado como autor de la reseña
+                return Response({
+                    "success": True,
+                    "message": "Reseña exitosamente creada :D",
+                    "review": self.get_serializer(review_instance).data
+                }, status=status.HTTP_201_CREATED)
+            except IntegrityError:
+                return Response({
+                    "success": False,
+                    "message": "Ya dejaste una reseña en este negocio. Solo se admite una reseña por negocio."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({
+                    "success": False,
+                    "message": f"Error al crear la reseña: {str(e)}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+                
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

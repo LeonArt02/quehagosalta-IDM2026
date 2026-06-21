@@ -1,6 +1,10 @@
 from django.db import models
 import uuid
 from django.contrib.auth.models import AbstractUser
+
+# para la validacion de rate
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 # Create your models here.
 
 class Categories(models.Model):
@@ -150,3 +154,66 @@ class BusinessImage(models.Model):
 
     class Meta:
         db_table = 'business_images'
+
+
+class Review(models.Model):
+    id =models.UUIDField(
+        primary_key=True, 
+        default=uuid.uuid4,
+        editable=False)
+    
+    # usuario que hizo la resña
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='reviews',
+        db_column='user_id'
+    )
+    
+    # business al que se le hizo la resña
+    bussines = models.ForeignKey(
+        Bussines, 
+        on_delete=models.CASCADE, 
+        related_name='reviews',
+        db_column='bussines_id'
+    )
+    
+    #descripcion nullable (máximo 70 caracteres)
+    description = models.CharField(
+        max_length=70, 
+        null=True, 
+        blank=True)
+    
+    #rate
+    rate = models.IntegerField(
+        validators=[
+            MinValueValidator(1), 
+            MaxValueValidator(5)
+        ]
+    )
+    
+    # foto nullable
+    photo = models.ImageField(
+        upload_to='reviews/photos',
+        null=True,
+        blank=True
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    
+    class Meta:
+        db_table = 'reviews'
+        # para evita que un mismo usuario pueda hacer mas de una reseña al mismo business
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'bussines'], 
+                name='unique_review_user_per_business'
+            )
+        ]
+    
+    def __str__(self):
+        return f"Review de {self.user.email} para {self.bussines.name} - Rate: {self.rate}"
+    
+    
+    

@@ -6,10 +6,10 @@ import 'package:quehagosalta/features/map/data/providers/category_provider.dart'
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
 import 'package:quehagosalta/features/map/data/services/category_services.dart';
-
+import 'package:quehagosalta/features/map/data/services/review_services.dart';
+import 'package:quehagosalta/features/map/data/providers/review_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
-import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
 
@@ -29,6 +29,7 @@ void main() {
           create: (_) => BusinessProvider(bussinesServices),
         ),
         ChangeNotifierProvider(create: (_) => AuthProvider(authService)),
+        ChangeNotifierProvider(create: (_) => ReviewProvider(ReviewServices(apiClient))),
       ],
       child: const MyApp(),
     ),

@@ -4,13 +4,15 @@ from rest_framework.routers import DefaultRouter
 
 
 
-from .views import CategoriesViewSet, BussinesViewSet, register, login,RoleViewSet
+
+from .views import CategoriesViewSet, BussinesViewSet, ReviewViewSet, register, login,RoleViewSet
 # enrutador automático
 router = DefaultRouter()
 
 router.register(r'categories', CategoriesViewSet, basename='categories')
 router.register(r'bussines', BussinesViewSet, basename='bussines')
 router.register(r'roles', RoleViewSet, basename='roles')
+router.register(r'reviews', ReviewViewSet, basename='reviews')
 
 
 urlpatterns = [
