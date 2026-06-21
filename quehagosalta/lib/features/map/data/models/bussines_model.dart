@@ -29,7 +29,7 @@ class BussinesModel {
 
   factory BussinesModel.fromJson(Map<String, dynamic> json) {
     return BussinesModel(
-      id: json['id'] ??'',
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       address: json['address'] ?? '',
