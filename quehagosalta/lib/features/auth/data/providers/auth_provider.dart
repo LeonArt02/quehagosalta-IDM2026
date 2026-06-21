@@ -56,8 +56,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> register({
-    required String firstName,
-    required String lastName,
+    required String first_name,
+    required String last_name,
     required String email,
     required String phone,
     required String password,
@@ -67,8 +67,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final AuthResponseModel response = await _authService.register(
-        firstName: firstName,
-        lastName: lastName,
+        first_name: first_name,
+        last_name: last_name,
         email: email,
         phone: phone,
         password: password,
@@ -86,9 +86,42 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateProfileOnServer({
+    required String first_name,
+    required String last_name,
+    required String phone,
+    String? cuil,
+  }) async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners(); // Prende el spinner de carga en el botón
+    try {
+      // 1. Invocamos al servicio pasándole el Token de sesión que ya tenemos guardado en el estado
+      final UserModel updatedUser = await _authService.updateProfile(
+        first_name: first_name,
+        last_name: last_name,
+        phone: phone,
+        cuil: cuil,
+        token: _token ?? '',
+      );
+      // 2. Usamos el mutador reactivo para actualizar la sesión en Flutter
+      updateCurrentUser(updatedUser);
+    } catch (e) {
+      rethrow; // Relanzamos para que la pantalla lo atrape y muestre un ToastService.error
+    } finally {
+      _isLoading = false;
+      notifyListeners(); // Apaga el spinner de carga
+    }
+  }
+
   void updateCurrentUser(UserModel updatedUser) {
+    if (_currentUser == null) {
+      _currentUser = updatedUser;
+      notifyListeners();
+      return;
+    }
     _currentUser = updatedUser;
-    notifyListeners();
+    notifyListeners(); // 🌟 Sincroniza inmediatamente la HomeScreen y el Perfil
   }
 
   /// Activa el modo anónimo/invitado para explorar la app

@@ -36,30 +36,16 @@ class User(AbstractUser):
         default=uuid.uuid4,
         editable=False
     )
-    firstName = models.CharField(max_length=100) 
-    lastName = models.CharField(max_length=100)
 
     email = models.EmailField(unique=True)
-    USERNAME_FIELD = 'email'  # 👈 El email pasa a ser el identificador único de Auth
+    USERNAME_FIELD = 'email'  
     REQUIRED_FIELDS = ['username']
 
     phone = models.CharField(max_length=20)
-
     cuil = models.CharField(max_length=13, null=True, blank=True, unique=True)
-
-    image = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True
-    )
-
+    image = models.CharField(max_length=255, null=True, blank=True)
     password = models.CharField(max_length=255)
-
-    notification_token = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True
-    )
+    notification_token = models.CharField(max_length=255, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -73,7 +59,7 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.firstName} ({self.email})"
+        return f"{self.first_name} ({self.email})"
 
 class UserHasRoles(models.Model):
     id = models.UUIDField(

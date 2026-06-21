@@ -39,7 +39,7 @@ class BussinesModel {
           ? double.parse(json['longitude'].toString())
           : -65.423198,
       owner: json['owner'] ?? '',
-      // Si la categoría viene nula porque el borrador no la tiene, evita romper instanciando un modelo vacío
+      // Si la categoría viene nula porque el borrador no la tiene, se evita errores con una cat. vacia.
       category: CategoryModel.fromJson(json['category'] ?? {}),
       imageUrls:
           (json['images'] as List<dynamic>?)

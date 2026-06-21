@@ -49,8 +49,8 @@ class UserAvatarButton extends StatelessWidget {
           child: avatarImage == null
               ? Text(
                   // Fallback: Si no tiene foto, mostramos las iniciales de su nombre
-                  user.firstName.isNotEmpty
-                      ? user.firstName[0].toUpperCase()
+                  user.first_name.isNotEmpty
+                      ? user.first_name[0].toUpperCase()
                       : 'U',
                   style: const TextStyle(
                     color: Colors.white,

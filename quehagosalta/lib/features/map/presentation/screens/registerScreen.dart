@@ -19,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
-  final _lastnameController = TextEditingController();
+  final _last_nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -29,7 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _lastnameController.dispose();
+    _last_nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
@@ -45,8 +45,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       await authProvider.register(
-        firstName: _nameController.text.trim(),
-        lastName: _lastnameController.text.trim(),
+        first_name: _nameController.text.trim(),
+        last_name: _last_nameController.text.trim(),
         email: _emailController.text.trim(),
         phone: _phoneController.text.trim(),
         password: _passwordController.text.trim(),
@@ -189,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: CustomTextField(
-                            controller: _lastnameController,
+                            controller: _last_nameController,
                             label: 'Apellido',
                             icon: Icons.badge_outlined,
                           ),

@@ -1,3 +1,4 @@
+from django.db.models import query
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import render
@@ -33,6 +34,37 @@ from .models import Categories, Bussines, Role, UserHasRoles, User, BusinessImag
 
 # 200 rpta exitosa
 # 400 o 500 Error
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['patch', 'put'], permission_classes=[IsAuthenticated])
+    def update_profile(self, request):
+        user_instance = request.user
+        print("=== 📡 DATOS QUE LLEGAN DESDE FLUTTER A DJANGO ===")
+        print(request.data)
+        print("==================================================")
+        # Guardamos usando los campos nativos que enviará el front (first_name, last_name)
+        serializer = UserSerializer(user_instance, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            user_instance.refresh_from_db()
+            
+            serializer_completo = UserSerializer(user_instance)
+            return Response({
+                "success": True,
+                "message": "¡Perfil actualizado correctamente en Salta!",
+                "data": serializer_completo.data  # 🌟 Envía todas las llaves oficiales (snake_case)
+            }, status=status.HTTP_200_OK)
+            
+        return Response({
+            "success": False,
+            "message": "Error de validación.",
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
@@ -175,7 +207,7 @@ def register(request):
                     UserHasRoles.objects.create(user=user, role=target_role) # Vinculamos al usuario con su rol comercial
                     Bussines.objects.create(
                         owner=user,
-                        name=f"Local de {user.firstName}", 
+                        name=f"Local de {user.first_name}", 
                         is_active=False # Inactivo hasta que llene el formulario 2 en Flutter
                     )
                 else:
@@ -192,8 +224,8 @@ def register(request):
             response_data = {
                 "user": {
                     "id": str(user.id),
-                    "firstName": user.firstName, 
-                    "lastName": user.lastName,   # Corregido: Mismo nombre del modelo
+                    "first_name": user.first_name, 
+                    "last_name": user.last_name,   # Corregido: Mismo nombre del modelo
                     "email": user.email,
                     "phone": user.phone,
                     "image": f'http://{settings.GLOBAL_IP}:{settings.GLOBAL_HOST}{user.image}' if user.image else None,
@@ -225,14 +257,14 @@ def get_custom_token_for_user(user):
     # agregar datos adicionales al payload del token
 
     refresh_token.payload['id'] = user.id 
-    refresh_token.payload['firstName'] = user.firstName 
+    refresh_token.payload['first_name'] = user.first_name 
     return refresh_token
 
 
 def getCustomTokenForUser(user):
     refresh_token = RefreshToken.for_user(user)
     refresh_token.payload['id'] = str(user.id)
-    refresh_token.payload['firstName'] = user.firstName
+    refresh_token.payload['first_name'] = user.first_name
     return refresh_token
 
 
@@ -277,7 +309,7 @@ def login(request):
         user_data = {
             "user": {
                 "id": str(user.id),
-                "lastName": user.lastName,
+                "last_name": user.last_name,
                 "email": user.email,
                 "phone": user.phone,
                 "image": (

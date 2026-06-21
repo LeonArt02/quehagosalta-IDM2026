@@ -6,7 +6,7 @@ Entrada(desde Flutter a Supabase){
 "user": {
     "id": id(autogenerado),
     "name": String,
-    "lastname": String,
+    "last_name": String,
     "email": Text,
     "phone": Integer,
     "image": (

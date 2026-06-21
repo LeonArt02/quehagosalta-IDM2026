@@ -18,6 +18,19 @@ class ApiClient {
     return headers;
   }
 
+  Future<Map<String, dynamic>> put(
+    String endpoint,
+    Map<String, dynamic> body,
+  ) async {
+    final uri = Uri.parse('$baseUrl$endpoint');
+    final response = await http.put(
+      uri,
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+    return _handleResponse(response);
+  }
+
   // agrego post
   Future<Map<String, dynamic>> post(
     String endpoint,

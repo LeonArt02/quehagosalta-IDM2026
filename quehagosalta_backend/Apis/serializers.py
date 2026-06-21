@@ -1,5 +1,6 @@
 from dataclasses import fields
 from dataclasses import field
+# pyrefly: ignore [missing-import]
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 
@@ -17,19 +18,19 @@ class RoleSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 class UserSerializer(serializers.ModelSerializer):
-    
-    password = serializers.CharField( #Validaciones de seguridad
+    password = serializers.CharField(
         write_only=True, 
         required=True, 
         style={'input_type': 'password'}
     )
     roles = serializers.SerializerMethodField(read_only=True)
-    class Meta :
+
+    class Meta:
         model = User
         fields = [
             'id', 
-            'firstName', 
-            'lastName', 
+            'first_name',  # 🌟 Estándar nativo de Django
+            'last_name',   # 🌟 Estándar nativo de Django
             'email', 
             'phone', 
             'password', 
@@ -38,12 +39,16 @@ class UserSerializer(serializers.ModelSerializer):
             'roles',
             'notification_token', 
             'created_at'
-            ]
+        ]
         read_only_fields = ['id', 'created_at']
+        extra_kwargs = {
+            'cuil': {'required': False, 'allow_null': True, 'allow_blank': True},
+            'image': {'required': False, 'allow_null': True, 'allow_blank': True},
+            'phone': {'required': False, 'allow_blank': True},
+        }
 
     def get_roles(self, obj):
         try:
-            # Django mapea la relación inversa uniendo el nombre del modelo en minúsculas + '_set'
             return [
                 {
                     "id": str(u_role.role.id), 

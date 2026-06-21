@@ -1,5 +1,6 @@
 import 'package:quehagosalta/core/api/api_client.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
+import 'package:quehagosalta/features/map/data/models/user_model.dart';
 import '../models/aut_response_model.dart';
 
 class AuthService {
@@ -25,17 +26,16 @@ class AuthService {
   }
 
   Future<AuthResponseModel> register({
-    required String firstName,
-    required String lastName,
+    required String first_name,
+    required String last_name,
     required String email,
-    required String
-    phone, // 🚀 Corregido: Obligatorio para coincidir con la Screen y el Back
+    required String phone,
     required String password,
     required bool isBusiness,
   }) async {
     final Map<String, dynamic> bodyData = {
-      'firstName': firstName,
-      'lastName': lastName,
+      'first_name': first_name,
+      'last_name': last_name,
       'email': email,
       'password': password,
       'phone': phone,
@@ -50,5 +50,28 @@ class AuthService {
     }
 
     return AuthResponseModel.fromJson(response['data']);
+  }
+
+  Future<UserModel> updateProfile({
+    required String first_name,
+    required String last_name,
+    required String phone,
+    String? cuil,
+    required String token,
+  }) async {
+    _apiClient.token = token.startsWith('Bearer') ? token : 'Bearer $token';
+
+    final response = await _apiClient.put('/users/update_profile/', {
+      'first_name': first_name,
+      'last_name': last_name,
+      'phone': phone,
+      if (cuil != null && cuil.isNotEmpty) 'cuil': cuil,
+    });
+
+    if (response['success'] == false) {
+      throw Exception(response['message'] ?? 'Error al actualizar el perfil');
+    }
+    // Devolvemos el usuario actualizado mapeado desde el campo 'data' del JSON
+    return UserModel.fromJson(response['data']);
   }
 }

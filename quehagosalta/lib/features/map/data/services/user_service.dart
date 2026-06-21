@@ -6,8 +6,8 @@ class UserService {
   Future<Map<String, dynamic>> updateUser({
     required int userId,
     required String token,
-    required String firstName,
-    required String lastName,
+    required String first_name,
+    required String last_name,
     required String phone,
     File? image,
   }) async {
@@ -16,7 +16,11 @@ class UserService {
     return await apiClient.multipartPut(
       endpoint: '/auth/upload/$userId/',
 
-      fields: {'firstName': firstName, 'lastName': lastName, 'phone': phone},
+      fields: {
+        'first_name': first_name,
+        'last_name': last_name,
+        'phone': phone,
+      },
 
       imagePath: image?.path,
     );

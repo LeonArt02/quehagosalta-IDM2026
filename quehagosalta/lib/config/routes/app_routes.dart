@@ -4,13 +4,13 @@ import 'package:quehagosalta/features/map/presentation/screens/registerScreen.da
 import 'package:quehagosalta/features/map/presentation/screens/HomeScreen.dart';
 import 'package:quehagosalta/features/auth/businessRegisterPage.dart';
 import 'package:quehagosalta/features/auth/owner_onboarding_screen.dart';
-import 'package:quehagosalta/features/users/screen/profile_dashboard.dart';
+import 'package:quehagosalta/features/users/screen/profileDashboard.dart';
 
 class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String homeScreen = '/home';
-  static const String profile = '/profile';
+  static const String profile = '/profileDashboard';
   static const String ownerOnboarding = '/owner_onboarding';
   static const String businessRegister = '/business_register';
 
@@ -18,7 +18,7 @@ class AppRoutes {
     login: (context) => const LoginPage(),
     register: (context) => const RegisterPage(),
     homeScreen: (context) => const Homescreen(),
-    profile: (context) => const Profile_dashboard(),
+    profile: (context) => const ProfileDashboard(),
     ownerOnboarding: (context) => const OwnerOnboardingPage(),
     businessRegister: (context) => const BusinessRegisterPage(),
   };

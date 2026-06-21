@@ -24,7 +24,7 @@ class Homescreen extends StatelessWidget {
 
     bool hasCompletedRegistration = false;
     if (isBusinessUser && user != null) {
-      hasCompletedRegistration = businessProvider.businesses.any(
+      hasCompletedRegistration = businessProvider.businessesWithoutFilter.any(
         (b) => b.owner == user.id && b.isActive == true,
       );
     }
@@ -46,6 +46,7 @@ class Homescreen extends StatelessWidget {
                 bottom: 20,
                 left: 10,
                 child: FloatingActionButton.extended(
+                  heroTag: 'fab_completar_registro',
                   onPressed: () {
                     final bool hasOwnerData =
                         user?.cuil != null &&
@@ -84,6 +85,7 @@ class Homescreen extends StatelessWidget {
                 bottom: 90,
                 right: 20,
                 child: FloatingActionButton(
+                  heroTag: 'fab_gestion_negocio',
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoutes.homeScreen);
                   },

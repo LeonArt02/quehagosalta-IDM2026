@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/utils/icon_mapper.dart';
-import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/userAvatarWidget.dart';
 import 'category_button.dart';
@@ -22,9 +21,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final categoryProvider = context.watch<CategoryProvider>();
-    final businessProvider = context.watch<BusinessProvider>();
-    final selectedCategoryId = businessProvider.selectedCategoryId;
+    final provider = context.watch<CategoryProvider>();
 
     return SafeArea(
       child: Padding(
@@ -32,32 +29,27 @@ class _TopBarWidgetState extends State<TopBarWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (categoryProvider.isLoading)
+            if (provider.isLoading)
               const Center(child: CircularProgressIndicator())
-            else if (categoryProvider.categories.isEmpty)
+            else if (provider.categories.isEmpty)
               const SizedBox.shrink() // No dibuja nada si está vacío
             else
               SizedBox(
                 height: 40,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: categoryProvider.categories.length + 1,
+                  itemCount: provider.categories.length,
                   itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return CategoryButton(
-                        name: 'Todos',
-                        icon: Icons.category,
-                        isSelected: selectedCategoryId == null,
-                        onTap: () => businessProvider.setCategoryFilter(null),
-                      );
-                    }
+                    final category = provider.categories[index];
 
-                    final category = categoryProvider.categories[index - 1];
+                    // Instanciamos tu componente atómico pasándole la info mapeada
                     return CategoryButton(
                       name: category.name,
                       icon: category.icon_key.toIcon(),
-                      isSelected: category.id == selectedCategoryId,
-                      onTap: () => businessProvider.setCategoryFilter(category.id),
+                      //onTap: () {
+                      //debugPrint('Filtro activo: ${category.name}');
+
+                      //},
                     );
                   },
                 ),
