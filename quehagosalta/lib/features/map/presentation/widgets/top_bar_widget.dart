@@ -4,6 +4,7 @@ import 'package:quehagosalta/core/utils/icon_mapper.dart';
 import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/userAvatarWidget.dart';
 import 'category_button.dart';
+import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
 
 class TopBarWidget extends StatefulWidget {
   const TopBarWidget({super.key});
@@ -21,8 +22,54 @@ class _TopBarWidgetState extends State<TopBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<CategoryProvider>();
+    final categoryProvider = context.watch<CategoryProvider>();
+    final businessProvider = context.watch<BusinessProvider>();
+    final selectedCategoryId = businessProvider.selectedCategoryId;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (categoryProvider.isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (categoryProvider.categories.isEmpty)
+              const SizedBox.shrink() // No dibuja nada si está vacío
+            else
+              SizedBox(
+                height: 40,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categoryProvider.categories.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return CategoryButton(
+                        name: 'Todos',
+                        icon: Icons.category,
+                        isSelected: selectedCategoryId == null,
+                        onTap: () => businessProvider.setCategoryFilter(null),
+                      );
+                    }
 
+                    final category = categoryProvider.categories[index - 1];
+                    return CategoryButton(
+                      name: category.name,
+                      icon: category.icon_key.toIcon(),
+                      isSelected: category.id == selectedCategoryId,
+                      onTap: () => businessProvider.setCategoryFilter(category.id),
+                    );
+                  },
+                ),
+              ),
+              const UserAvatarButton(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/*
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -61,3 +108,4 @@ class _TopBarWidgetState extends State<TopBarWidget> {
     );
   }
 }
+*/
