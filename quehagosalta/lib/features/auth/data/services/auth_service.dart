@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quehagosalta/core/api/api_client.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
-import 'package:quehagosalta/features/map/data/models/user_model.dart';
+import 'package:quehagosalta/features/users/data/models/user_model.dart';
 import '../models/aut_response_model.dart';
 
 class AuthService {

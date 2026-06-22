@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'role_model.dart';
+import '../../../map/data/models/role_model.dart';
 
 class UserModel {
   final String id;

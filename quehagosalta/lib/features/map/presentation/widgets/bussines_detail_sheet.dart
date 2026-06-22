@@ -70,7 +70,7 @@ class BussinesDetailSheet extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final imagePath = bussines.imageUrls[index];
                       final fullUrl =
-                          "http://${ApiConfig.ipConfigurable}:8000$imagePath";
+                          "http://${ApiConfig.ipConfigurable}$imagePath";
                       final heroTag = 'bussines-image-$fullUrl';
                       // al hacer tapear en una foto, se abre el visuzalizador en pantalla completa
                       return GestureDetector(

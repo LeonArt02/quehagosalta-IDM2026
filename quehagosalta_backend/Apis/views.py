@@ -96,10 +96,6 @@ class BussinesViewSet(viewsets.ModelViewSet):
         cuil_data = request.data.get('cuil')
         profile_image_file = request.FILES.get('image') or request.FILES.get('profileImage') 
 
-        print("--- DEBUG COMPLETE PROFILE ---")
-        print(f"User ID: {user_instance.id}")
-        print(f"cuil enviado en Request: '{cuil_data}' | cuil en la DB de Supabase: '{user_instance.cuil}'")
-        print(f"Foto enviada en Request: {profile_image_file} | Foto en la DB de Supabase: '{user_instance.image}'")
 
         final_cuil = cuil_data if cuil_data else user_instance.cuil #evaluamos el cuil y imagen del usuario
         has_profile_image = bool(profile_image_file) or bool(user_instance.image)
@@ -184,6 +180,56 @@ class BussinesViewSet(viewsets.ModelViewSet):
               {"message": f"Error al procesar el formulario: {str(e)}"},
              status=status.HTTP_400_BAD_REQUEST
             )
+
+    @action(detail=False, methods=['get', 'put'], permission_classes=[IsAuthenticated])
+    def my_business(self, request):
+        try:
+            business_instance = Bussines.objects.get(owner=request.user)
+        except Bussines.DoesNotExist:
+            return Response(
+                {"message": "No se encontró ningún negocio asociado a esta cuenta."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        if request.method == 'GET':
+            serializer = self.get_serializer(business_instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if request.method == 'PUT':
+            # Pasamos partial=True para que solo valide y guarde lo enviado
+            serializer = self.get_serializer(business_instance, data=request.data, partial=True)
+            
+            if serializer.is_valid():
+                serializer.save()
+                
+                # Procesamos opcionalmente una nueva lista de fotos si el dueño las actualiza
+                gallery_files = request.FILES.getlist('business_images')
+                if gallery_files:
+                    # Borramos las viejas de la base de datos
+                    BusinessImage.objects.filter(bussines=business_instance).delete()
+                    
+                    # Guardamos las nuevas
+                    for index, file in enumerate(gallery_files):
+                        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'business'))
+                        filename = f"{business_instance.id}_update_{index}_{file.name}"
+                        saved_name = fs.save(filename, file)
+                        computed_url = f"/uploads/business/{saved_name}"
+                        
+                        BusinessImage.objects.create(
+                            bussines=business_instance, 
+                            image_url=computed_url
+                        )
+                
+                # Refrescamos la instancia para devolver todo actualizado
+                business_instance.refresh_from_db()
+                full_serializer = self.get_serializer(business_instance)
+                
+                return Response({
+                    "success": True,
+                    "message": "¡Negocio actualizado correctamente en Salta!",
+                    "business": full_serializer.data
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
