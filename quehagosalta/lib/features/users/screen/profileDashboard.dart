@@ -62,14 +62,14 @@ class _ProfileDashboardState extends State<ProfileDashboard> {
     final String inputfirst_name = _first_nameController.text.trim();
     final String inputlast_name = _last_nameController.text.trim();
     final String inputPhone = _phoneController.text.trim();
-    final String? inputCuil = isBussines ? _cuilController.text.trim() : null;
+    final String? inputcuil = isBussines ? _cuilController.text.trim() : null;
 
     try {
       await authProvider.updateProfileOnServer(
         first_name: inputfirst_name,
         last_name: inputlast_name,
         phone: inputPhone,
-        cuil: inputCuil,
+        cuil: inputcuil,
       );
       ToastService.success('¡Perfil actualizado con éxito!');
     } catch (e) {
@@ -83,23 +83,6 @@ class _ProfileDashboardState extends State<ProfileDashboard> {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.currentUser;
-
-    print("====== 🔍 AUDITORÍA DE MEMORIA EN PROFILE CRÍTICA ======");
-    print("User Object completo en memoria es Null?: ${user == null}");
-    if (user != null) {
-      print("ID del Usuario: '${user.id}' (Tipo: ${user.id.runtimeType})");
-      print("Nombre (first_name): '${user.first_name}'");
-      print("Apellido (last_name): '${user.last_name}'");
-      print("Email: '${user.email}'");
-      print("CUIL: '${user.cuil}'");
-      print("Foto de Perfil: '${user.profileImage}'");
-      print("Cantidad de Roles en la lista: ${user.roles.length}");
-      if (user.roles.isNotEmpty) {
-        print("Primer Rol Name: '${user.roles.first.name}'");
-      }
-    }
-    print("======================================================");
-
     final isBussines =
         user?.roles.any((rol) => rol.name == 'business_user') ?? false;
 
@@ -171,7 +154,7 @@ class _ProfileDashboardState extends State<ProfileDashboard> {
                 const SizedBox(height: 16),
                 CustomTextField(
                   controller: _cuilController,
-                  label: 'Datos Fiscales (CUIL/CUIT) *',
+                  label: 'Datos Fiscales (cuil/CUIT) *',
                   icon: Icons.badge,
                 ),
               ],

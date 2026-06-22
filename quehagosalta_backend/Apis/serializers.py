@@ -29,8 +29,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 
-            'first_name',  # 🌟 Estándar nativo de Django
-            'last_name',   # 🌟 Estándar nativo de Django
+            'first_name',  
+            'last_name',   
             'email', 
             'phone', 
             'password', 
@@ -41,11 +41,6 @@ class UserSerializer(serializers.ModelSerializer):
             'created_at'
         ]
         read_only_fields = ['id', 'created_at']
-        extra_kwargs = {
-            'cuil': {'required': False, 'allow_null': True, 'allow_blank': True},
-            'image': {'required': False, 'allow_null': True, 'allow_blank': True},
-            'phone': {'required': False, 'allow_blank': True},
-        }
 
     def get_roles(self, obj):
         try:

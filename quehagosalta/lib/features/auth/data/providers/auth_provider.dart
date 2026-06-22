@@ -86,26 +86,30 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateProfileOnServer({
+  Future<UserModel> updateProfileOnServer({
     required String first_name,
     required String last_name,
     required String phone,
     String? cuil,
   }) async {
-    if (_token == null) return;
     _isLoading = true;
     notifyListeners(); // Prende el spinner de carga en el botón
     try {
       // 1. Invocamos al servicio pasándole el Token de sesión que ya tenemos guardado en el estado
-      final UserModel updatedUser = await _authService.updateProfile(
+      final updatedUser = await _authService.updateProfile(
         first_name: first_name,
         last_name: last_name,
         phone: phone,
         cuil: cuil,
         token: _token ?? '',
       );
+      if (updatedUser.id == 'null' || updatedUser.id.isEmpty) {
+        throw Exception("El servidor retornó un usuario inválido.");
+      }
       // 2. Usamos el mutador reactivo para actualizar la sesión en Flutter
       updateCurrentUser(updatedUser);
+
+      return updatedUser;
     } catch (e) {
       rethrow; // Relanzamos para que la pantalla lo atrape y muestre un ToastService.error
     } finally {
@@ -115,13 +119,20 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void updateCurrentUser(UserModel updatedUser) {
-    if (_currentUser == null) {
-      _currentUser = updatedUser;
-      notifyListeners();
+    if (updatedUser.id.isEmpty || updatedUser.email.isEmpty) {
       return;
     }
     _currentUser = updatedUser;
-    notifyListeners(); // 🌟 Sincroniza inmediatamente la HomeScreen y el Perfil
+    notifyListeners();
+  }
+
+  set currentUser(UserModel? user) {
+    if (user == null || user.id.isEmpty) {
+      throw Exception(
+        "¡ALERTA! Alguien está intentando poner un usuario vacío en el Provider",
+      );
+    }
+    _currentUser = user;
   }
 
   /// Activa el modo anónimo/invitado para explorar la app

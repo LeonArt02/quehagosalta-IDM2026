@@ -14,8 +14,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 # pyrefly: ignore [missing-import]
 from rest_framework.decorators import action, api_view, permission_classes
+# pyrefly: ignore [missing-import]
 from rest_framework.permissions import AllowAny
 from django.conf import settings
+# pyrefly: ignore [missing-import]
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 
@@ -42,9 +44,6 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['patch', 'put'], permission_classes=[IsAuthenticated])
     def update_profile(self, request):
         user_instance = request.user
-        print("=== 📡 DATOS QUE LLEGAN DESDE FLUTTER A DJANGO ===")
-        print(request.data)
-        print("==================================================")
         # Guardamos usando los campos nativos que enviará el front (first_name, last_name)
         serializer = UserSerializer(user_instance, data=request.data, partial=True)
         
@@ -56,7 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({
                 "success": True,
                 "message": "¡Perfil actualizado correctamente en Salta!",
-                "data": serializer_completo.data  # 🌟 Envía todas las llaves oficiales (snake_case)
+                "data": serializer_completo.data  
             }, status=status.HTTP_200_OK)
             
         return Response({
@@ -99,7 +98,7 @@ class BussinesViewSet(viewsets.ModelViewSet):
 
         print("--- DEBUG COMPLETE PROFILE ---")
         print(f"User ID: {user_instance.id}")
-        print(f"CUIL enviado en Request: '{cuil_data}' | CUIL en la DB de Supabase: '{user_instance.cuil}'")
+        print(f"cuil enviado en Request: '{cuil_data}' | cuil en la DB de Supabase: '{user_instance.cuil}'")
         print(f"Foto enviada en Request: {profile_image_file} | Foto en la DB de Supabase: '{user_instance.image}'")
 
         final_cuil = cuil_data if cuil_data else user_instance.cuil #evaluamos el cuil y imagen del usuario
@@ -108,7 +107,7 @@ class BussinesViewSet(viewsets.ModelViewSet):
         
         if not final_cuil or not has_profile_image:
             return Response(
-                {"message": "El CUIL y la Foto de Perfil son obligatorios para el alta comercial."},
+                {"message": "El cuil y la Foto de Perfil son obligatorios para el alta comercial."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -225,7 +224,7 @@ def register(request):
                 "user": {
                     "id": str(user.id),
                     "first_name": user.first_name, 
-                    "last_name": user.last_name,   # Corregido: Mismo nombre del modelo
+                    "last_name": user.last_name,   
                     "email": user.email,
                     "phone": user.phone,
                     "image": f'http://{settings.GLOBAL_IP}:{settings.GLOBAL_HOST}{user.image}' if user.image else None,
@@ -309,9 +308,11 @@ def login(request):
         user_data = {
             "user": {
                 "id": str(user.id),
+                "first_name": user.first_name,
                 "last_name": user.last_name,
                 "email": user.email,
                 "phone": user.phone,
+                "CUIL":user.cuil,
                 "image": (
                     f'http://{settings.GLOBAL_IP}:{settings.GLOBAL_HOST}{user.image}'
                     if user.image else None
