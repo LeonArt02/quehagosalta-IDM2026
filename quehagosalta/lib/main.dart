@@ -29,7 +29,9 @@ void main() {
           create: (_) => BusinessProvider(bussinesServices),
         ),
         ChangeNotifierProvider(create: (_) => AuthProvider(authService)),
-        ChangeNotifierProvider(create: (_) => ReviewProvider(ReviewServices(apiClient))),
+        ChangeNotifierProvider(
+          create: (_) => ReviewProvider(ReviewServices(apiClient)),
+        ),
       ],
       child: const MyApp(),
     ),

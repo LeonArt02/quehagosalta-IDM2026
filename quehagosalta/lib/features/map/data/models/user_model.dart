@@ -24,24 +24,41 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("=== JSON CRUDO DESDE DJANGO EN USERMODEL ===");
-    debugPrint(json.toString());
-    debugPrint("=============================================");
+    final Map<String, dynamic> targetJson = json.containsKey('data')
+        ? json['data'] as Map<String, dynamic>
+        : json;
+
+    final rawId = targetJson['id'];
+    final String safeId = (rawId != null && rawId.toString() != 'null')
+        ? rawId.toString()
+        : '';
+
+    final String rawImage =
+        (targetJson['image'] ??
+                targetJson['profile_image'] ??
+                targetJson['profileImage'] ??
+                '')
+            .toString();
+    String safeProfileImage = rawImage;
+    if (rawImage.isNotEmpty && !rawImage.startsWith('http')) {
+      const String baseUrl = 'http://192.168.100.15:8000';
+      safeProfileImage =
+          rawImage.startsWith('/') //que no se dupliquen '/'
+          ? '$baseUrl$rawImage'
+          : '$baseUrl/$rawImage';
+    }
 
     return UserModel(
-      id: json['id'].toString(),
-      first_name: json['first_name'] ?? '',
-      last_name: json['last_name'] ?? '',
-      email: json['email'] ?? json['username'] ?? '',
-      phone: json['phone']?.toString(),
-      cuil: (json['cuil'] != null && json['cuil'].toString() != 'null')
-          ? json['cuil'].toString()
-          : '',
-      profileImage:
-          json['image'] ?? json['profile_image'] ?? json['profileImage'],
-      roles: json['roles'] != null
+      id: safeId,
+      first_name: targetJson['first_name'] ?? '',
+      last_name: targetJson['last_name'] ?? '',
+      email: targetJson['email'] ?? targetJson['username'] ?? '',
+      phone: targetJson['phone']?.toString(),
+      cuil: (targetJson['cuil'] ?? targetJson['CUIL'] ?? '').toString(),
+      profileImage: safeProfileImage,
+      roles: targetJson['roles'] != null
           ? List<RoleModel>.from(
-              (json['roles'] as List).map(
+              (targetJson['roles'] as List).map(
                 (roleJson) => RoleModel.fromJson(roleJson),
               ),
             )

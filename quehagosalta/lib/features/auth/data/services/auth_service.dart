@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:quehagosalta/core/api/api_client.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
 import 'package:quehagosalta/features/map/data/models/user_model.dart';
@@ -67,11 +68,12 @@ class AuthService {
       'phone': phone,
       if (cuil != null && cuil.isNotEmpty) 'cuil': cuil,
     });
-
-    if (response['success'] == false) {
+    final Map<String, dynamic> userData =
+        response['data'] as Map<String, dynamic>;
+    if (response['success'] == true) {
+      return UserModel.fromJson(userData);
+    } else {
       throw Exception(response['message'] ?? 'Error al actualizar el perfil');
     }
-    // Devolvemos el usuario actualizado mapeado desde el campo 'data' del JSON
-    return UserModel.fromJson(response['data']);
   }
 }

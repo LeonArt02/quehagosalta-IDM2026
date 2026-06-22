@@ -20,7 +20,7 @@ class _OwnerOnboardingPageState extends State<OwnerOnboardingPage> {
   File? _profileImage;
   final _picker = ImagePicker();
 
-  // Máscara argentina para CUIL: XX-XXXXXXXX-X
+  // Máscara argentina para cuil: XX-XXXXXXXX-X
   final _cuilFormatter = MaskTextInputFormatter(
     mask: '##-########-#',
     filter: {"#": RegExp(r'[0-9]')},
@@ -131,7 +131,7 @@ class _OwnerOnboardingPageState extends State<OwnerOnboardingPage> {
               const SizedBox(height: 30),
               CustomTextField(
                 controller: _cuilController,
-                label: 'Tu CUIL/CUIT *',
+                label: 'Tu cuil/CUIT *',
                 icon: Icons.badge,
                 // inputFormatters: [_cuilFormatter], // Si tu CustomTextField expone inputFormatters
               ),
