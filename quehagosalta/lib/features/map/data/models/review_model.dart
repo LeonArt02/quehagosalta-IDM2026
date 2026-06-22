@@ -5,6 +5,7 @@ class ReviewModel {
   final String username;
   final DateTime createdAt;
   final String bussinesId; 
+  final String? imageUrl;
 
   ReviewModel({
     required this.id,
@@ -13,6 +14,7 @@ class ReviewModel {
     required this.username,
     required this.createdAt,
     required this.bussinesId,
+    this.imageUrl,
   });
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class ReviewModel {
     }
 
     return ReviewModel(
+      imageUrl: json['photo'],
       id: json['id'] ?? '',
       rate: json['rate'] ?? 0, // Siempre es bueno poner un valor por defecto
       description: json['description'] ?? '',

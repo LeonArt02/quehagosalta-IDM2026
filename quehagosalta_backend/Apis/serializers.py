@@ -138,7 +138,8 @@ class ReviewSerializer(serializers.ModelSerializer):
                   'bussines', 
                   'rate', 
                   'description', 
-                  'created_at'
+                  'created_at',
+                  'photo'
                 ]
         
         read_only_fields = ['id', 'user', 'created_at']

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/features/map/data/providers/review_provider.dart';
 import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 class ReviewFormWidget extends StatefulWidget {
   final String bussinesId;
 
@@ -17,12 +20,24 @@ class _ReviewFormWidgetState extends State<ReviewFormWidget> {
   final TextEditingController _descriptionController = TextEditingController();
   int _selectedRating = 0;
   bool _isSubmitting = false;
-
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void dispose() {
     _descriptionController.dispose();
     super.dispose();
+  }
+  Future<void> _pickImage() async{
+    final XFile? image = await _picker.pickImage(source: 
+    ImageSource.gallery, 
+    imageQuality: 60
+    );
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+    }
   }
 
   Future<void> _submitReview() async {
@@ -48,11 +63,17 @@ class _ReviewFormWidgetState extends State<ReviewFormWidget> {
       rate: _selectedRating,
       description: _descriptionController.text.trim(),
       authToken: authToken,
+      imageUrl: _selectedImage?.path,
     );
     setState(() => _isSubmitting = false);
     if (success) {
       _descriptionController.clear();
-      setState(() => _selectedRating = 0);
+      
+      setState(() {
+        _selectedRating = 0;
+        _selectedImage = null;
+
+      } );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Gracias por tu opinión!')),
       );
@@ -103,6 +124,38 @@ class _ReviewFormWidgetState extends State<ReviewFormWidget> {
               ),
             ),
             const SizedBox(height: 10),
+            // --- SELECTOR DE IMAGEN ---
+            Row(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: _pickImage,
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Adjuntar foto'),
+                ),
+                const SizedBox(width: 10),
+                if (_selectedImage != null)
+                  Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(_selectedImage!, width: 50, height: 50, fit: BoxFit.cover),
+                      ),
+                      GestureDetector(
+                        onTap: () => setState(() => _selectedImage = null),
+                        child: const CircleAvatar(
+                          radius: 10, 
+                          backgroundColor: Colors.red, 
+                          child: Icon(Icons.close, size: 12, color: Colors.white)
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            const SizedBox(height: 15),
+            
+
             ElevatedButton(
               onPressed: _isSubmitting ? null : _submitReview,
               style: ElevatedButton.styleFrom(

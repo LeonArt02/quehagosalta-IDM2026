@@ -39,11 +39,10 @@ class ReviewProvider extends ChangeNotifier {
       _reviews = rawList
           .map((json) => ReviewModel.fromJson(json))
           // Aquí filtramos para mostrar solo las del negocio seleccionado
-          // Ojo: asegúrate de que tu ReviewModel tenga un campo "bussinesId" extraído del JSON
           .where((review) => review.bussinesId == bussinesId) 
           .toList();
 
-      // Ordenamos para que las más recientes salgan arriba
+      // Ordenamo
       _reviews.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     } catch (e) {
@@ -61,6 +60,7 @@ class ReviewProvider extends ChangeNotifier {
     required int rate,
     required String description,
     required String authToken,
+    String? imageUrl,
   }) async {
     _isLoading = true;
     _errorMessage = '';
@@ -72,6 +72,7 @@ class ReviewProvider extends ChangeNotifier {
         rate: rate,
         description: description,
         token: authToken,
+        imageUrl: imageUrl,
       );
       
       // Si fue exitoso, recargamos la lista

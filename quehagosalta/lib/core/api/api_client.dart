@@ -106,4 +106,49 @@ class ApiClient {
       'message': data['message'] ?? 'Error desconocido en el servidor',
     };
   }
+
+  // Agrega esto en tu clase ApiClient
+  Future<Map<String, dynamic>> multipartPost({
+    required String endpoint,
+    required Map<String, String> fields,
+    String? imagePath,
+    String imageFieldKey = 'image', // 💡 Por defecto usa 'photo', cámbialo si en Django usaste 'image'
+  }) async {
+    // 1. Construimos la URL completa (Asegúrate de usar tu variable de baseUrl)
+    final url = Uri.parse('$baseUrl$endpoint'); 
+    
+    var request = http.MultipartRequest('POST', url);
+
+    // 2. Agregamos el Token de Autorización si existe
+    if (token != null && token!.isNotEmpty) {
+      request.headers['Authorization'] = token!;
+    }
+
+    request.fields.addAll(fields);
+
+    if (imagePath != null && imagePath.isNotEmpty) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          imageFieldKey, 
+          imagePath,
+        ),
+      );
+    }
+
+    // 5. Enviamos la petición al servidor
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      // Si todo sale bien (Código 200 o 201 Created)
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return json.decode(utf8.decode(response.bodyBytes));
+      } else {
+        // Si Django devuelve error (Ej. 400 Bad Request)
+        throw Exception(response.body); 
+      }
+    } catch (e) {
+      throw Exception('Error de conexión en multipartPost: $e');
+    }
+  }
 }

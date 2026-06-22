@@ -5,7 +5,6 @@ import 'package:quehagosalta/core/api/api_config.dart';
 
 class ReviewServices {
   final ApiClient _apiClient;
-
   ReviewServices(this._apiClient);
 
   // GET: todas las reseñas
@@ -19,14 +18,28 @@ class ReviewServices {
     required int rate,
     required String description,
     required String token,
+    String? imageUrl
   }) async {
     _apiClient.token = token.startsWith('Bearer') ? token : 'Bearer $token';
-    // Usamos el método post de tu ApiClient
-    return await _apiClient.post(
-      '/reviews/',
-      {
+
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return await _apiClient.post(
+        '/reviews/',
+        {
+          'bussines': bussinesId,
+          'rate': rate,
+          'description': description,
+        },
+      );
+    }
+    
+    return await _apiClient.multipartPost(
+      endpoint: '/reviews/',
+      imagePath: imageUrl, // 
+      imageFieldKey: 'photo',
+      fields: {
         'bussines': bussinesId,
-        'rate': rate,
+        'rate': rate.toString(), 
         'description': description,
       },
     );
