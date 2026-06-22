@@ -148,13 +148,17 @@ class ReviewSerializer(serializers.ModelSerializer):
         
         read_only_fields = ['id', 'user', 'created_at']
         
-    def toRepresentation(self, instance):
+    def to_representation(self, instance):
         representation = super().to_representation(instance)
         
         if instance.user:
+            # Unimos nombre y apellido, y le quitamos espacios extra de los bordes
+            full_name = f"{instance.user.first_name} {instance.user.last_name}".strip()
+            
             representation['user'] = {
                 'id': str(instance.user.id),
-                'username': instance.user.firstName + ' ' + instance.user.lastName,
+                # Si tiene nombre lo muestra, si está vacío muestra "Usuario anónimo"
+                'username': full_name if full_name else "Usuario anónimo",
             }
 
         return representation
