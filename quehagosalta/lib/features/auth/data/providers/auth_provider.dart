@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
-import 'package:quehagosalta/features/map/data/models/user_model.dart';
+import 'package:quehagosalta/features/users/data/models/user_model.dart';
 import 'package:quehagosalta/features/auth/data/models/aut_response_model.dart';
 import 'package:quehagosalta/features/map/data/models/role_model.dart';
 

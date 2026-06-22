@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
 import 'package:quehagosalta/features/auth/data/services/toast_service.dart';
-import 'package:quehagosalta/features/map/data/models/user_model.dart';
+import 'package:quehagosalta/features/users/data/models/user_model.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_textfield.dart';
 

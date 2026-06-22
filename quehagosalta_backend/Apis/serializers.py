@@ -149,7 +149,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         if instance.user:
             representation['user'] = {
                 'id': str(instance.user.id),
-                'username': instance.user.firstName + ' ' + instance.user.lastName,
+                'username': instance.user.first_name + ' ' + instance.user.last_name,
             }
 
         return representation

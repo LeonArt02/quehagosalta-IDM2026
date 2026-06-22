@@ -4,7 +4,7 @@ class ReviewModel {
   final String description;
   final String username;
   final DateTime createdAt;
-  final String bussinesId; 
+  final String bussinesId;
 
   ReviewModel({
     required this.id,
@@ -16,15 +16,14 @@ class ReviewModel {
   });
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
-    
     // 1. Extraemos el usuario de forma segura
     String parsedUsername = 'Usuario anónimo';
     if (json['user'] is Map) {
       // Si Django mandó el diccionario completo
-      parsedUsername = json['user']['username'] ?? 'Usuario anónimo';
+      parsedUsername = json['user']['first_name'] ?? 'Usuario anónimo';
     } else if (json['user'] is String) {
       // Si Django mandó solo el ID crudo
-      parsedUsername = 'Usuario'; 
+      parsedUsername = 'Usuario';
     }
 
     // 2. Extraemos el ID del negocio de forma segura
@@ -44,8 +43,8 @@ class ReviewModel {
       username: parsedUsername,
       bussinesId: parsedBussinesId,
       // 3. Protegemos la fecha por si viene nula
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at']) 
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
           : DateTime.now(),
     );
   }
@@ -63,5 +62,4 @@ class ReviewModel {
     );
     }
   */
-  
-  }
+}

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/utils/icon_mapper.dart';
 import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
-import 'package:quehagosalta/features/map/presentation/widgets/userAvatarWidget.dart';
+import 'package:quehagosalta/features/users/widgets/userAvatarWidget.dart';
 import 'category_button.dart';
 import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
 
@@ -56,12 +56,13 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                       name: category.name,
                       icon: category.icon_key.toIcon(),
                       isSelected: category.id == selectedCategoryId,
-                      onTap: () => businessProvider.setCategoryFilter(category.id),
+                      onTap: () =>
+                          businessProvider.setCategoryFilter(category.id),
                     );
                   },
                 ),
               ),
-              const UserAvatarButton(),
+            const UserAvatarButton(),
           ],
         ),
       ),
