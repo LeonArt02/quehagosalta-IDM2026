@@ -23,6 +23,9 @@ class BusinessProvider extends ChangeNotifier {
 
   String? get selectedCategoryId => _selectedCategoryId;
 
+  BussinesModel? _myBusiness;
+  BussinesModel? get myBusiness => _myBusiness;
+
   List<BussinesModel> get businesses {
     if (_selectedCategoryId == null)
       return _businesses;
@@ -100,6 +103,69 @@ class BusinessProvider extends ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Error al registrar el local: $e';
       debugPrint(_errorMessage);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadMyBusiness(String token) async {
+    _isLoading = true;
+    _errorMessage = '';
+    notifyListeners();
+    try {
+      final response = await _service.getMyBusinessProfile(token);
+      if (response['data'] != null) {
+        _myBusiness = BussinesModel.fromJson(response['data']);
+      } else {
+        _myBusiness = BussinesModel.fromJson(response);
+      }
+      _errorMessage = '';
+    } catch (e) {
+      _errorMessage = 'Error al obtener tu negocio: $e';
+      _myBusiness = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void setMyBusiness(BussinesModel business) {
+    _myBusiness = business;
+    notifyListeners();
+  }
+
+  Future<bool> updateBusiness({
+    required String name,
+    required String description,
+    required List<String> businessImagesPaths,
+    required String authToken,
+  }) async {
+    _isLoading = true;
+    _errorMessage = '';
+    notifyListeners();
+
+    try {
+      final response = await _service.updateBusinessProfile(
+        name: name,
+        description: description,
+        businessImagesPaths: businessImagesPaths,
+        token: authToken,
+      );
+
+      final dynamic responseData = response['data'] ?? response;
+
+      if (responseData != null && responseData['business'] != null) {
+        _myBusiness = BussinesModel.fromJson(responseData['business']);
+
+        await loadBusinesses();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _errorMessage = 'Error al actualizar los datos: $e';
+      debugPrint(_errorMessage);
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -87,7 +87,7 @@ class Homescreen extends StatelessWidget {
                 child: FloatingActionButton(
                   heroTag: 'fab_gestion_negocio',
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.homeScreen);
+                    Navigator.pushNamed(context, AppRoutes.businessDashboard);
                   },
                   backgroundColor: Colors.green,
                   elevation: 2,

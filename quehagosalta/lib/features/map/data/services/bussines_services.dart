@@ -9,6 +9,11 @@ class BussinesServices {
     return await _apiClient.get('/bussines/');
   }
 
+  Future<Map<String, dynamic>> getMyBusinessProfile(String token) async {
+    _apiClient.token = token.startsWith('Bearer') ? token : 'Bearer $token';
+    return await _apiClient.get('/bussines/my_business/');
+  }
+
   Future<Map<String, dynamic>> completeBusinessProfile({
     required String cuil,
     String? imagePath,
@@ -36,6 +41,21 @@ class BussinesServices {
         'latitude': latitude.toString(),
         'longitude': longitude.toString(),
       },
+    );
+  }
+
+  Future<Map<String, dynamic>> updateBusinessProfile({
+    required String name,
+    required String description,
+    required List<String> businessImagesPaths,
+    required String token,
+  }) async {
+    _apiClient.token = token.startsWith('Bearer') ? token : 'Bearer $token';
+
+    return await _apiClient.multipartPut(
+      endpoint: '/bussines/my_business/',
+      galleryPaths: businessImagesPaths,
+      fields: {'name': name, 'description': description},
     );
   }
 }

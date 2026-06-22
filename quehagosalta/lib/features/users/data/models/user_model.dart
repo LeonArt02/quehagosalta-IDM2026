@@ -41,7 +41,7 @@ class UserModel {
             .toString();
     String safeProfileImage = rawImage;
     if (rawImage.isNotEmpty && !rawImage.startsWith('http')) {
-      const String baseUrl = 'http://192.168.100.15';
+      const String baseUrl = 'http://192.168.100.15:8000';
       safeProfileImage =
           rawImage.startsWith('/') //que no se dupliquen '/'
           ? '$baseUrl$rawImage'

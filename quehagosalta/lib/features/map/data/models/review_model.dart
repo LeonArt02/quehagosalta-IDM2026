@@ -20,7 +20,7 @@ class ReviewModel {
     String parsedUsername = 'Usuario anónimo';
     if (json['user'] is Map) {
       // Si Django mandó el diccionario completo
-      parsedUsername = json['user']['first_name'] ?? 'Usuario anónimo';
+      parsedUsername = json['user']['username'] ?? 'Usuario anónimo';
     } else if (json['user'] is String) {
       // Si Django mandó solo el ID crudo
       parsedUsername = 'Usuario';
