@@ -11,9 +11,9 @@ import 'package:quehagosalta/features/auth/data/services/toast_service.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/CustomFlutterMap.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_textfield.dart';
-import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
+import 'package:quehagosalta/features/business/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
-import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
+import 'package:quehagosalta/features/categories/data/providers/category_provider.dart';
 
 class BusinessRegisterPage extends StatefulWidget {
   const BusinessRegisterPage({super.key});

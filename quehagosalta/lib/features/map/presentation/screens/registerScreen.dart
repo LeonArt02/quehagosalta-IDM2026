@@ -200,7 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     CustomTextField(
                       controller: _phoneController,
-                      label: 'Teléfono (Opcional)',
+                      label: 'Teléfono',
                       icon: Icons.phone,
                     ),
                     const SizedBox(height: 20),

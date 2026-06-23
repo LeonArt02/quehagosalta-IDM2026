@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
+import 'package:quehagosalta/features/business/data/models/bussines_model.dart';
 import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
-import 'package:quehagosalta/features/map/presentation/widgets/bussines_detail_sheet.dart';
-import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
+import 'package:quehagosalta/features/business/widgets/bussines_detail_sheet.dart';
+import 'package:quehagosalta/features/business/data/services/bussines_services.dart';
 import 'package:latlong2/latlong.dart';
 
 class BusinessProvider extends ChangeNotifier {

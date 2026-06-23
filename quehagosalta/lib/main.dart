@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/api/api_client.dart';
 import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
-import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
+import 'package:quehagosalta/features/categories/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/auth/data/services/auth_service.dart';
-import 'package:quehagosalta/features/map/data/services/category_services.dart';
-import 'package:quehagosalta/features/map/data/services/review_services.dart';
-import 'package:quehagosalta/features/map/data/providers/review_provider.dart';
-import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
-import 'package:quehagosalta/features/map/data/services/bussines_services.dart';
+import 'package:quehagosalta/features/categories/data/services/category_services.dart';
+import 'package:quehagosalta/features/reviews/data/services/review_services.dart';
+import 'package:quehagosalta/features/reviews/data/providers/review_provider.dart';
+import 'package:quehagosalta/features/business/data/providers/business_provider.dart';
+import 'package:quehagosalta/features/business/data/services/bussines_services.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
 
 void main() {
-  final apiClient = ApiClient(baseUrl: 'http://10.120.175.34:8000/api/v1');
+  final apiClient = ApiClient(baseUrl: 'http://127.0.0.1:8000/api/v1');
   final categotyservices = CategoryServices(apiClient);
   final bussinesServices = BussinesServices(apiClient);
   final authService = AuthService(apiClient);

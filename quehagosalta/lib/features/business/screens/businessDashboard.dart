@@ -3,8 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io' as io;
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
-import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
-import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
+import 'package:quehagosalta/features/business/data/models/bussines_model.dart';
+import 'package:quehagosalta/features/business/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
 
 class BusinessDashboardScreen extends StatefulWidget {

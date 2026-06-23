@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:quehagosalta/features/map/presentation/screens/loginScreen.dart';
 import 'package:quehagosalta/features/map/presentation/screens/registerScreen.dart';
 import 'package:quehagosalta/features/map/presentation/screens/HomeScreen.dart';
-import 'package:quehagosalta/features/auth/businessRegisterPage.dart';
-import 'package:quehagosalta/features/auth/owner_onboarding_screen.dart';
+import 'package:quehagosalta/features/business/screens/businessRegisterPage.dart';
+import 'package:quehagosalta/features/business/screens/owner_onboarding_screen.dart';
 import 'package:quehagosalta/features/users/screen/profileDashboard.dart';
 import 'package:quehagosalta/features/business/screens/businessDashboard.dart';
 

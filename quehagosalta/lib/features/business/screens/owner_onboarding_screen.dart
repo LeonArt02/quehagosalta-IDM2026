@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
+import 'package:quehagosalta/core/validators/validator.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_textfield.dart';
 import 'package:quehagosalta/features/auth/data/services/toast_service.dart';
@@ -88,7 +89,10 @@ class _OwnerOnboardingPageState extends State<OwnerOnboardingPage> {
     Navigator.pushNamed(
       context,
       AppRoutes.businessRegister,
-      arguments: {'cuil': _cuilController.text, 'profileImage': _profileImage},
+      arguments: {
+        'cuil': _cuilController.toString(),
+        'profileImage': _profileImage,
+      },
     );
   }
 
@@ -104,7 +108,7 @@ class _OwnerOnboardingPageState extends State<OwnerOnboardingPage> {
             children: [
               const SizedBox(height: 10),
               GestureDetector(
-                onLongPress: () => _showImageSourceActionSheet(context),
+                onTap: () => _showImageSourceActionSheet(context),
                 child: CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey[300],
@@ -129,11 +133,17 @@ class _OwnerOnboardingPageState extends State<OwnerOnboardingPage> {
                 ),
               ),
               const SizedBox(height: 30),
-              CustomTextField(
+              TextFormField(
                 controller: _cuilController,
-                label: 'Tu cuil/CUIT *',
-                icon: Icons.badge,
-                // inputFormatters: [_cuilFormatter], // Si tu CustomTextField expone inputFormatters
+                keyboardType: TextInputType.number,
+                inputFormatters: [_cuilFormatter],
+                validator: Validators.cuil,
+                decoration: const InputDecoration(
+                  labelText: 'Tu cuil/CUIT *',
+                  hintText: '20-12345678-9',
+                  prefixIcon: Icon(Icons.badge),
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 40),
               CustomButton(

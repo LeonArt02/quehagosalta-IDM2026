@@ -1,7 +1,5 @@
 class Validators {
-
   static String? email(String? value) {
-
     if (value == null || value.trim().isEmpty) {
       return 'Ingrese el email';
     }
@@ -17,9 +15,7 @@ class Validators {
     return null;
   }
 
-
   static String? password(String? value) {
-
     if (value == null || value.isEmpty) {
       return 'Ingrese la contraseña';
     }
@@ -31,11 +27,7 @@ class Validators {
     return null;
   }
 
-  static String? requiredField(
-    String? value,
-    String field,
-  ) {
-
+  static String? requiredField(String? value, String field) {
     if (value == null || value.trim().isEmpty) {
       return 'Ingrese $field';
     }
@@ -43,9 +35,7 @@ class Validators {
     return null;
   }
 
-
-    static String? required(String? value) {
-
+  static String? required(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Campo obligatorio';
     }
@@ -53,7 +43,16 @@ class Validators {
     return null;
   }
 
+  static String? cuil(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Ingrese el CUIL';
+    }
 
+    // Extraemos únicamente los números (eliminando los guiones del formato visual)
+    final cleanCuil = value.replaceAll(RegExp(r'[^\d]'), '');
 
-
+    if (cleanCuil.length != 11) {
+      return 'El CUIL debe tener 11 dígitos';
+    }
+  }
 }

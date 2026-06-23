@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
+import 'package:quehagosalta/features/business/data/models/bussines_model.dart';
 import 'package:quehagosalta/features/map/data/providers/locationProvider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/CustomFlutterMap.dart';
-import 'package:quehagosalta/features/map/presentation/widgets/bussines_detail_sheet.dart';
-import 'package:quehagosalta/features/map/presentation/widgets/user-location-marker.dart';
-import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
-import 'package:quehagosalta/features/map/presentation/widgets/bussines_marker_widget.dart';
+import 'package:quehagosalta/features/business/widgets/bussines_detail_sheet.dart';
+import 'package:quehagosalta/features/users/widgets/user-location-marker.dart';
+import 'package:quehagosalta/features/business/data/providers/business_provider.dart';
+import 'package:quehagosalta/features/business/widgets/bussines_marker_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/utils/icon_mapper.dart';
-import 'user-location-marker.dart';
+import '../../../users/widgets/user-location-marker.dart';
 import 'CustomFlutterMap.dart';
-import 'package:quehagosalta/features/map/data/models/category_model.dart';
+import 'package:quehagosalta/features/categories/data/models/category_model.dart';
 
 class MapBaseWidget extends StatefulWidget {
   const MapBaseWidget({super.key});
@@ -58,7 +58,7 @@ class _mapBaseWidget extends State<MapBaseWidget> {
         width: 45,
         height: 45,
         alignment: Alignment.center,
-          child: GestureDetector(
+        child: GestureDetector(
           onTap: () {
             BussinesDetailSheet.show(context, business, userLatLng);
           },

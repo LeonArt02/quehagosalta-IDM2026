@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
 import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
-import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
+import 'package:quehagosalta/features/business/data/providers/business_provider.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/MapaBaseWidget.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/top_bar_widget.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/custom_button.dart';
+import 'package:quehagosalta/features/users/widgets/userAvatarWidget.dart';
 
 class Homescreen extends StatelessWidget {
   const Homescreen({super.key});
@@ -30,6 +31,22 @@ class Homescreen extends StatelessWidget {
     }
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        centerTitle: false,
+        title: const Text(
+          'QueHagoSalta',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 18.0),
+            child: UserAvatarButton(), // Tu widget personalizado de avatar
+          ),
+        ],
+        elevation: 15,
+        backgroundColor: Colors.transparent,
+      ),
       body: Stack(
         children: [
           const MapBaseWidget(),

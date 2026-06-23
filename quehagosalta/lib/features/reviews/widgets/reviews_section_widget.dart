@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quehagosalta/features/map/data/providers/review_provider.dart';
+import 'package:quehagosalta/features/reviews/data/providers/review_provider.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
 import 'package:quehagosalta/features/map/presentation/widgets/fullscreen_image_viewer.dart';
 

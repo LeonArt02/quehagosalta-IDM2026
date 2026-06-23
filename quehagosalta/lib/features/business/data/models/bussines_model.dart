@@ -1,4 +1,4 @@
-import 'category_model.dart';
+import '../../../categories/data/models/category_model.dart';
 
 class BussinesModel {
   final String id;

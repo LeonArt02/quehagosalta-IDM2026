@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/utils/icon_mapper.dart';
-import 'package:quehagosalta/features/map/data/providers/category_provider.dart';
+import 'package:quehagosalta/features/categories/data/providers/category_provider.dart';
 import 'package:quehagosalta/features/users/widgets/userAvatarWidget.dart';
-import 'category_button.dart';
-import 'package:quehagosalta/features/map/data/providers/business_provider.dart';
+import '../../../categories/widgets/category_button.dart';
+import 'package:quehagosalta/features/business/data/providers/business_provider.dart';
 
 class TopBarWidget extends StatefulWidget {
   const TopBarWidget({super.key});
@@ -62,7 +62,8 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                   },
                 ),
               ),
-            const UserAvatarButton(),
+            //const SizedBox(height: 20),
+            //const UserAvatarButton(),
           ],
         ),
       ),

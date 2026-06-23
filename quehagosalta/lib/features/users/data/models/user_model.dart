@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../map/data/models/role_model.dart';
+import 'role_model.dart';
 
 class UserModel {
   final String id;
@@ -39,13 +39,14 @@ class UserModel {
                 targetJson['profileImage'] ??
                 '')
             .toString();
-    String safeProfileImage = rawImage;
-    if (rawImage.isNotEmpty && !rawImage.startsWith('http')) {
-      const String baseUrl = 'http://10.120.175.34:8000';
-      safeProfileImage =
-          rawImage.startsWith('/') //que no se dupliquen '/'
-          ? '$baseUrl$rawImage'
-          : '$baseUrl/$rawImage';
+    String? safeProfileImage;
+    if (rawImage.isNotEmpty && rawImage != 'null') {
+      if (rawImage.startsWith('http')) {
+        final uri = Uri.parse(rawImage);
+        safeProfileImage = uri.path;
+      } else {
+        safeProfileImage = rawImage;
+      }
     }
 
     return UserModel(

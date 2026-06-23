@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/config/routes/app_routes.dart';
+import 'package:quehagosalta/core/api/api_config.dart';
 import 'package:quehagosalta/features/auth/data/providers/auth_provider.dart';
 
 class UserAvatarButton extends StatelessWidget {
@@ -35,6 +36,16 @@ class UserAvatarButton extends StatelessWidget {
       }
     }
 
+    String? fullAvatarUrl;
+    if (user?.profileImage != null && user!.profileImage!.isNotEmpty) {
+      final imagePath = user.profileImage!;
+
+      // Nos aseguramos de concatenar correctamente el '/'
+      fullAvatarUrl = imagePath.startsWith('/')
+          ? "http://${ApiConfig.ipConfigurable}$imagePath"
+          : "http://${ApiConfig.ipConfigurable}/$imagePath";
+    }
+
     return GestureDetector(
       onTap: () {
         // Al tocar su foto, lo mandamos a su perfil o panel
@@ -45,7 +56,9 @@ class UserAvatarButton extends StatelessWidget {
         child: CircleAvatar(
           radius: 30, // Tamaño ideal para barras superiores (TopBar)
           backgroundColor: Colors.orange.shade200,
-          backgroundImage: avatarImage,
+          backgroundImage: avatarImage != null
+              ? NetworkImage(fullAvatarUrl!)
+              : null,
           child: avatarImage == null
               ? Text(
                   // Fallback: Si no tiene foto, mostramos las iniciales de su nombre

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:quehagosalta/features/map/data/models/category_model.dart';
-import 'package:quehagosalta/features/map/data/services/category_services.dart';
+import 'package:quehagosalta/features/categories/data/models/category_model.dart';
+import 'package:quehagosalta/features/categories/data/services/category_services.dart';
 
 class CategoryProvider extends ChangeNotifier {
   final List<CategoryModel> _categories = [];
