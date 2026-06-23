@@ -4,12 +4,8 @@ class ReviewModel {
   final String description;
   final String username;
   final DateTime createdAt;
-<<<<<<< HEAD
-  final String bussinesId; 
-  final String? imageUrl;
-=======
   final String bussinesId;
->>>>>>> 35d64d6da879e707f975f345b2c3201ef86b3dd2
+  final String? imageUrl;
 
   ReviewModel({
     required this.id,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io' as io;
 import 'package:provider/provider.dart';
 import 'package:quehagosalta/core/api/api_config.dart';
 import 'package:quehagosalta/features/map/data/models/bussines_model.dart';
@@ -17,13 +19,15 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  List<String> _selectedNewImages = [];
+  final ImagePicker _picker = ImagePicker();
+  List<String> _currentRemoteImages = []; // URLs remotas visibles
+  List<XFile> _selectedNewImagesFiles = []; // Archivos locales para subir
+  bool _isImagesInitialized = false;
   bool _isControllersInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    // Disparamos la carga de datos al entrar a la pantalla usando un postFrameCallback
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final businessProvider = Provider.of<BusinessProvider>(
@@ -32,7 +36,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       );
 
       if (authProvider.token != null) {
-        businessProvider.loadMyBusiness(authProvider.token!);
+        await businessProvider.loadMyBusiness(authProvider.token!);
         final business = businessProvider.myBusiness;
         if (business != null) {
           setState(() {
@@ -90,16 +94,16 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
         ),
       );
     }
-    // Si por alguna razón el negocio no está cargado en memoria, mostramos un aviso
 
     if (!_isControllersInitialized || _nameController.text != business.name) {
       _nameController.text = business.name;
       _descriptionController.text = business.description;
       _isControllersInitialized = true;
     }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Panel de Mi Negocio',
           style: TextStyle(color: Colors.black),
         ),
@@ -125,7 +129,17 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    business.imageUrls.isEmpty
+
+                    if (!_isImagesInitialized) ...[
+                      () {
+                        _currentRemoteImages = List.from(business.imageUrls);
+                        _isImagesInitialized = true;
+                        return const SizedBox.shrink();
+                      }(),
+                    ],
+
+                    (_currentRemoteImages.isEmpty &&
+                            _selectedNewImagesFiles.isEmpty)
                         ? Container(
                             height: 150,
                             width: double.infinity,
@@ -139,49 +153,150 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                           )
                         : SizedBox(
                             height: 120,
-                            child: ListView.builder(
+                            child: ListView(
                               scrollDirection: Axis.horizontal,
-                              itemCount: business.imageUrls.length,
-                              itemBuilder: (context, index) {
-                                final imagePath = business.imageUrls[index];
-                                final fullUrl =
-                                    "http://${ApiConfig.ipConfigurable}$imagePath";
-                                return Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    image: DecorationImage(
-                                      // Aquí concatenás la IP base si tus URLs vienen relativas del back
-                                      image: NetworkImage(fullUrl),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              },
+                              children: [
+                                ..._currentRemoteImages.map((imagePath) {
+                                  final fullUrl =
+                                      "http://${ApiConfig.ipConfigurable}$imagePath";
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          right: 10,
+                                          top: 5,
+                                        ),
+                                        width: 120,
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          image: DecorationImage(
+                                            image: NetworkImage(fullUrl),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        right: 5,
+                                        child: CircleAvatar(
+                                          radius: 14,
+                                          backgroundColor: Colors.red,
+                                          child: IconButton(
+                                            padding: EdgeInsets.zero,
+                                            icon: const Icon(
+                                              Icons.close,
+                                              size: 16,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _currentRemoteImages.remove(
+                                                  imagePath,
+                                                );
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+
+                                ..._selectedNewImagesFiles.map((file) {
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          right: 10,
+                                          top: 5,
+                                        ),
+                                        width: 120,
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.amber,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                          child: Image.network(
+                                            file.path,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return Image.file(
+                                                    io.File(file.path),
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        right: 5,
+                                        child: CircleAvatar(
+                                          radius: 14,
+                                          backgroundColor: Colors.black,
+                                          child: IconButton(
+                                            padding: EdgeInsets.zero,
+                                            icon: const Icon(
+                                              Icons.close,
+                                              size: 16,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _selectedNewImagesFiles.remove(
+                                                  file,
+                                                );
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ],
                             ),
                           ),
-                    const SizedBox(height: 10),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        // Aquí llamarías a tu selector de archivos (File Picker / Image Picker)
-                        // Ej: _selectedNewImages = await pickMultipleImages();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Función para seleccionar nuevas fotos',
+                    const SizedBox(height: 12),
+
+                    // Botón para seleccionar imágenes locales de la galería (Corregido)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              final List<XFile>? images = await _picker
+                                  .pickMultiImage();
+                              if (images != null && images.isNotEmpty) {
+                                setState(() {
+                                  _selectedNewImagesFiles.addAll(images);
+                                });
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.photo_library,
+                              color: Colors.amber,
+                            ),
+                            label: const Text(
+                              'Agregar Fotos',
+                              style: TextStyle(color: Colors.black),
                             ),
                           ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.photo_library,
-                        color: Colors.amber,
-                      ),
-                      label: const Text(
-                        'Reemplazar Galería de Fotos',
-                        style: TextStyle(color: Colors.black),
-                      ),
+                        ),
+                      ],
                     ),
                     const Divider(height: 32),
 
@@ -228,7 +343,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     ),
                     const Divider(height: 32),
 
-                    // --- DATOS DE SOLO LECTURA (CATEGORÍA Y DIRECCIÓN) ---
+                    // --- DATOS DE SOLO LECTURA ---
                     const Text(
                       'Datos Fijos (No Editables)',
                       style: TextStyle(
@@ -327,7 +442,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     ),
                     const SizedBox(height: 30),
 
-                    // --- BOTÓN GUARDAR CAMBIOS ---
+                    // --- BOTÓN GUARDAR CAMBIOS (Corregido y consolidado) ---
                     SizedBox(
                       width: double.infinity,
                       height: 48,
@@ -340,18 +455,26 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                         ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final success = await businessProvider
-                                .updateBusiness(
-                                  name: _nameController.text.trim(),
-                                  description: _descriptionController.text
-                                      .trim(),
-                                  businessImagesPaths: _selectedNewImages,
-                                  authToken:
-                                      authProvider.token ??
-                                      '', // Tu token JWT de AuthProvider
-                                );
+                            // Convertimos la lista de XFile elegida localmente a Paths reales de Strings
+                            final List<String> pathsToSend =
+                                _selectedNewImagesFiles
+                                    .map((f) => f.path)
+                                    .toList();
+
+                            final success = await businessProvider.updateBusiness(
+                              name: _nameController.text.trim(),
+                              description: _descriptionController.text.trim(),
+                              businessImagesPaths:
+                                  pathsToSend, // Pasamos la variable correcta mapeada
+                              authToken: authProvider.token ?? '',
+                              keptImages: _currentRemoteImages,
+                            );
 
                             if (success) {
+                              setState(() {
+                                _isImagesInitialized = false;
+                                _selectedNewImagesFiles.clear();
+                              });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(

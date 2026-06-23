@@ -1,4 +1,5 @@
 import 'package:quehagosalta/core/api/api_client.dart';
+import 'dart:convert';
 
 class BussinesServices {
   final ApiClient _apiClient;
@@ -48,6 +49,7 @@ class BussinesServices {
     required String name,
     required String description,
     required List<String> businessImagesPaths,
+    required List<String> keptImages,
     required String token,
   }) async {
     _apiClient.token = token.startsWith('Bearer') ? token : 'Bearer $token';
@@ -55,7 +57,11 @@ class BussinesServices {
     return await _apiClient.multipartPut(
       endpoint: '/bussines/my_business/',
       galleryPaths: businessImagesPaths,
-      fields: {'name': name, 'description': description},
+      fields: {
+        'name': name,
+        'description': description,
+        'kept_images': jsonEncode(keptImages),
+      },
     );
   }
 }

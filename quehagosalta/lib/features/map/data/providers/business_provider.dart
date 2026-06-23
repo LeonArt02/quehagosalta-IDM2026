@@ -139,6 +139,7 @@ class BusinessProvider extends ChangeNotifier {
     required String name,
     required String description,
     required List<String> businessImagesPaths,
+    required List<String> keptImages,
     required String authToken,
   }) async {
     _isLoading = true;
@@ -150,6 +151,7 @@ class BusinessProvider extends ChangeNotifier {
         name: name,
         description: description,
         businessImagesPaths: businessImagesPaths,
+        keptImages: keptImages,
         token: authToken,
       );
 
