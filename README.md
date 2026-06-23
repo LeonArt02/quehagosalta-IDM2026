@@ -81,11 +81,6 @@ flutter pub get
 Configurar la IP de conexión (¡Paso Crítico!):
 Abre el archivo lib/core/api/api_config.dart y configura la variable ipConfigurable dependiendo de cómo vayas a emular la app:
 
-Si usas el Emulador de Android Studio: Usa '10.0.2.2'
-
-Si usas un Celular Físico (vía Wi-Fi): Usa tu IP local (ej. '192.168.1.5'). Descúbrela usando el comando ipconfig en Windows o ifconfig en Mac/Linux.
-
-Si usas un Celular Físico con ADB Reverse (Cable USB): Usa '127.0.0.1'.
 
 Ejecutar la Aplicación:
 Conecta tu dispositivo o inicia el emulador y ejecuta:
