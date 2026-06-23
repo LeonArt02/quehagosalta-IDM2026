@@ -19,7 +19,6 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   List<String> _selectedNewImages = [];
   bool _isControllersInitialized = false;
-  final String _baseUrl = 'http://192.168.100.15:8000';
 
   @override
   void initState() {
