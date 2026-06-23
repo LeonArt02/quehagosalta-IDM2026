@@ -136,8 +136,8 @@ class _OwnerOnboardingPageState extends State<OwnerOnboardingPage> {
               TextFormField(
                 controller: _cuilController,
                 keyboardType: TextInputType.number,
-                inputFormatters: [_cuilFormatter],
-                validator: Validators.cuil,
+                //inputFormatters: [_cuilFormatter],
+                //validator: Validators.cuil,
                 decoration: const InputDecoration(
                   labelText: 'Tu cuil/CUIT *',
                   hintText: '20-12345678-9',
