@@ -2,20 +2,20 @@ from django.db.models import query
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.shortcuts import render
+import json
 
 # Create your views here.
 from rest_framework import viewsets
 import os;
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from django.core.files.storage import FileSystemStorage
 from rest_framework_simplejwt.tokens import RefreshToken
 # pyrefly: ignore [missing-import]
 from rest_framework.response import Response
 # pyrefly: ignore [missing-import]
 from rest_framework.decorators import action, api_view, permission_classes
-# pyrefly: ignore [missing-import]
-from rest_framework.permissions import AllowAny
+
 from django.conf import settings
 # pyrefly: ignore [missing-import]
 from rest_framework import status
@@ -203,9 +203,14 @@ class BussinesViewSet(viewsets.ModelViewSet):
                 
                 # Procesamos opcionalmente una nueva lista de fotos si el dueño las actualiza
                 gallery_files = request.FILES.getlist('business_images')
-                if gallery_files:
+                kept_images_raw = request.data.get('kept_images', '[]')
+                try:
+                    kept_images = json.loads(kept_images_raw) # Transforma el string '["/uploads/..."]' a una lista real
+                except Exception:
+                    kept_images = []
+                if gallery_files or kept_images:
                     # Borramos las viejas de la base de datos
-                    BusinessImage.objects.filter(bussines=business_instance).delete()
+                    BusinessImage.objects.filter(bussines=business_instance).exclude(image_url__in=kept_images).delete()
                     
                     # Guardamos las nuevas
                     for index, file in enumerate(gallery_files):
