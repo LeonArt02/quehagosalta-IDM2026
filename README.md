@@ -36,34 +36,15 @@ El proyecto está dividido en dos partes: el **Servidor (Backend)** y la **Aplic
 bash
 git clone [https://github.com/tu-usuario/quehagosalta.git](https://github.com/tu-usuario/quehagosalta.git)
 cd quehagosalta/backend
-2. Crear y activar un entorno virtual (Recomendado):
+2. Crear y activar un entorno virtual 
 
-En Windows:
-
-Bash
-python -m venv venv
-.\venv\Scripts\activate
-En Mac / Linux:
-
-Bash
-python3 -m venv venv
-source venv/bin/activate
 3. Instalar las dependencias:
-
-💡 Asegúrate de que tu archivo requirements.txt incluya django, djangorestframework, djangorestframework-simplejwt, psycopg2 y Pillow.
-
-Bash
 pip install -r requirements.txt
+
 4. Configurar Variables de Entorno (Base de Datos):
-En el archivo settings.py, asegúrate de colocar las credenciales de tu base de datos de Supabase en la configuración DATABASES. Además, verifica que ALLOWED_HOSTS = ['*'] para permitir conexiones desde el celular.
+En el archivo settings.py verifica que ALLOWED_HOSTS = ['*'] para permitir conexiones desde el celular.
 
-5. Aplicar migraciones e iniciar el servidor:
-
-Bash
-python manage.py makemigrations
-python manage.py migrate
 python manage.py runserver 0.0.0.0:8000
-✅ El backend quedará corriendo en el puerto 8000, listo para recibir peticiones de la red.
 
 📱 Parte 2: Configuración del Frontend (Flutter)
 1. Navegar a la carpeta del frontend y descargar paquetes:
@@ -72,16 +53,12 @@ Abre una nueva terminal y dirígete a la carpeta de la aplicación móvil:
 Bash
 cd quehagosalta/frontend
 flutter pub get
+
 2. Configurar la IP de conexión (¡Paso Crítico!):
-
-⚠️ Sincronización de Red: Dado que el frontend necesita comunicarse con el servidor local, debes sincronizar las IPs.
-
-En el Frontend: Abre el archivo quehagosalta/core/api/api_config.dart y configura la variable ipConfigurable dependiendo de cómo vayas a emular la app (Ej. tu IP de red local).
-
-En el Backend: Abre el archivo quehagosalta_backend/config/settings.py y configura la variable GLOBAL_IP con tu IP.
+- Configurar IP con puerto 8000 en quehagosalta/lib/core/api/api_config.dart
+- Configurar IP en quehagosalta_backend/config/settings.py, Configurar Variable GLOBAL_IP
 
 3. Ejecutar la Aplicación:
-Conecta tu dispositivo físico o inicia el emulador y ejecuta:
 
 Bash
 flutter run
